@@ -4,9 +4,22 @@ library(ggplot2)
 library(plotly)
 library(dplyr)
 library(fresh)
-
+library(lubridate)
+library(tidyverse)
+library(viridis)
+library(htmltools)
+library(scales)
+#setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
 activities_Ola <- read.csv("activities_Ola.csv")
-
+ActivitiesTogether <- read.csv("ActivitiesTogether_Maciek.csv")
+ActivitiesTogether$startTime <- as.POSIXct(ActivitiesTogether$startTime, format = "%Y-%m-%d %H:%M:%S")
+ActivitiesTogether$Rok <- format(ActivitiesTogether$startTime, "%Y")
+ActivitiesTogether$RokAndMonth <- format(ActivitiesTogether$startTime, "%Y-%m")
+ActivitiesTogether$Rok <- as.numeric(ActivitiesTogether$Rok)
+ActivitiesTogether$Day <- wday(ActivitiesTogether$startTime, week_start = 1)
+ActivitiesTogether$Month <- month(ActivitiesTogether$startTime)
+zmienne = c("Distance (km)", "Time (minutes)","Average Speed (km/h)")
+zmienne_heat <- c("Number of records", "Distance (km)", "Time (minutes)")
 
 # Create the theme
 mytheme <- create_theme(
@@ -123,11 +136,52 @@ body <- dashboardBody(
     
     ### Maciek ###
     
-    tabItem(tabName = "competition"),
+    tabItem(tabName = "competition",
+            fluidRow(
+              box(
+                title = "Competiton",
+                textOutput("competitiondescribtion")
+              ),
+              box(
+                selectInput("zmienna",
+                            "For which variable do you want to summarize?",
+                            zmienne,
+                           ),
+                sliderInput("zakres",
+                            "Choose the range of years",
+                            value = c(min(ActivitiesTogether$Rok), max(ActivitiesTogether$Rok)),
+                            min = 2020,
+                            max = max(ActivitiesTogether$Rok),
+                            step = 1),
+                width = 6
+                 ),
+            ),
+            
+            fluidRow(
+              box(
+                title = textOutput("competition1PlotTitle"),
+                plotlyOutput("competition1"),
+                width = 6
+              ),
+              box(
+                textOutput("competitionInteractivityDesc"),
+                width=6
+              )
+            ),
+            
+            fluidRow(
+              box(
+               width=6 
+              ),
+              box(
+                plotlyOutput("competition2")
+              )
+            )
+    ),
     
     tabItem(tabName = "individualMaciek")
     
-  )
+  
   
   ## STYLES
   
@@ -139,7 +193,7 @@ body <- dashboardBody(
   # )
   
   )
-
+)
 dashboardPage(header, sidebar, body)
 
 ui <- dashboardPage(header, sidebar, body)
@@ -238,7 +292,90 @@ server <- function(input, output) {
       
       
       ### Maciek ###
+      output$competition1 <- renderPlotly({
+        if(input$zmienna == "Distance (km)"){
+          m = "Dystans"
+          output$competition1PlotTitle <- renderText({
+            "Total distance over the years"
+          })
+          df <- ActivitiesTogether %>% filter(Rok >= input$zakres[1],
+                                              Rok <= input$zakres[2]) %>%
+            group_by(Osoba) %>% 
+            summarize(score = sum(!!sym(m)))
+          yaxisRange = c(0,15000)
+        }
+        if(input$zmienna == "Time (minutes)"){
+          m = "Czas"
+          output$competition1PlotTitle <- renderText({
+            "How much time have we spent cycling over the years (in minutes)"
+          })
+          df <- ActivitiesTogether %>% filter(Rok >= input$zakres[1],
+                                              Rok <= input$zakres[2]) %>%
+            group_by(Osoba) %>% 
+            summarize(score = sum(!!sym(m)))
+          yaxisRange = c(0,25000)
+        }
+        if(input$zmienna == "Average Speed (km/h)"){
+          m = "ŚredniaPrędkość"
+          output$competition1PlotTitle <- renderText({
+            "Our average speed across all rides"
+          })
+          df <- ActivitiesTogether %>% filter(Rok >= input$zakres[1],
+                                              Rok <= input$zakres[2]) %>%
+            group_by(Osoba) %>% 
+            summarize(score = mean(!!sym(m)))
+          yaxisRange = c(0,50)
+        }
       
+      plot_ly(df,x=~Osoba,y=~score,color=~Osoba, type = "bar") %>% 
+        layout(xaxis = list(title = "Person"), yaxis = list(title = input$zmienna,tickformat = ",d",range=yaxisRange))
+      })
+      
+      output$competitiondescribtion <- renderText({
+        "Competition tab is where our activity is summarised. Here we compare 
+        ourselves depending on total distance, average speed or time
+        spent on cycling in minutes."
+      })
+      
+      output$competitionInteractivityDesc <- renderText({
+        "Explore our scores with those two charts. The bar chart consists summarized score in
+        selected period of time while linear chart shows the progress throughout years. You can easily change 
+        considering topic on the top of this text and select years with slider. (Note that slider doesn't affect 
+        linear chart. Otherwise this chart would make no sense)"
+        
+      })
+      #competition2
+      output$competition2 <- renderPlotly({
+        if(input$zmienna == "Distance (km)"){
+          m = "Dystans"
+          df <- ActivitiesTogether %>% filter(Rok >=2020) %>%
+            group_by(Osoba,Rok) %>% 
+            summarize(score = sum(!!sym(m)))
+        }
+        if(input$zmienna == "Time (minutes)"){
+          m = "Czas"
+          df <- ActivitiesTogether %>% filter(Rok >=2020) %>%
+            group_by(Osoba,Rok) %>% 
+            summarize(score = sum(!!sym(m)))
+        }
+        if(input$zmienna == "Average Speed (km/h)"){
+          m = "ŚredniaPrędkość"
+          df <- ActivitiesTogether %>% filter(Rok >=2020) %>%
+            group_by(Osoba,Rok) %>% 
+            summarize(score = mean(!!sym(m)))
+        }
+        plot_ly(df,
+                x=~Rok,
+                y=~score,
+                type="scatter",
+                mode="lines",
+                color = ~Osoba
+        ) %>% layout(
+          yaxis = list(title = input$zmienna),
+          xaxis = list(title = "Year",tickmode = "array", tickvals = unique(df$Rok), 
+                       ticktext = unique(df$Rok))
+        )
+      })
       
     
 }
