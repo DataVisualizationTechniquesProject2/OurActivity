@@ -9,7 +9,7 @@ library(tidyverse)
 library(viridis)
 library(htmltools)
 library(scales)
-#setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
+setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
 activities_Ola <- read.csv("activities_Ola.csv")
 ActivitiesTogether <- read.csv("ActivitiesTogether_Maciek.csv")
 ActivitiesTogether$startTime <- as.POSIXct(ActivitiesTogether$startTime, format = "%Y-%m-%d %H:%M:%S")
@@ -20,6 +20,9 @@ ActivitiesTogether$Day <- wday(ActivitiesTogether$startTime, week_start = 1)
 ActivitiesTogether$Month <- month(ActivitiesTogether$startTime)
 zmienne = c("Distance (km)", "Time (minutes)","Average Speed (km/h)")
 zmienne_heat <- c("Number of records", "Distance (km)", "Time (minutes)")
+Kroki_Calorie <- read.csv("Kroki_Kalorie_Maciek.csv")
+HeartRate_Maciek <- read.csv("HeartRate_Maciek.csv")
+HeartRate_Maciek$recordDay <- as.POSIXct(HeartRate_Maciek$recordDay)
 
 # Create the theme
 mytheme <- create_theme(
@@ -179,7 +182,47 @@ body <- dashboardBody(
             )
     ),
     
-    tabItem(tabName = "individualMaciek")
+    tabItem(tabName = "individualMaciek",
+            fluidRow(
+              box(
+                title = textOutput("individualMaciekdescribtion")
+              )
+            ),
+            fluidRow(
+              box(
+                title = textOutput("individualMaciek1Desc"),
+                width = 3
+              ),
+              box(
+                title = "Corelation between steps and calories",
+                numericInput("limitKcal", "Type in calories limit", value=max(Kroki_Calorie$Kalorie)),
+                plotlyOutput("individualMaciek1"),
+                width = 9
+              )
+            ),
+            fluidRow(
+              box(
+                title = "In which month do I walk the most?",
+                plotlyOutput("individualMaciek2"),
+                width = 6
+              ),
+              box(
+                title = textOutput("individualMaciek2Desc"),
+                width = 6
+              )
+            ),
+            fluidRow(
+              box(title = textOutput("individualMaciek3Desc"),
+                  width = 12
+                  )
+            ),
+            fluidRow(
+              box(title = "Average heart rate per month",
+                  plotlyOutput("individualMaciek3"),
+                  width = 12
+                  )
+            )
+    )
     
   
   
@@ -375,6 +418,58 @@ server <- function(input, output) {
           xaxis = list(title = "Year",tickmode = "array", tickvals = unique(df$Rok), 
                        ticktext = unique(df$Rok))
         )
+      })
+      
+      output$individualMaciek1 <- renderPlotly({
+        
+        ggplotly(Kroki_Calorie  %>% filter(Kalorie <= input$limitKcal) %>%  ggplot(aes(x=Kroki,y=Kalorie)) + stat_density2d(geom="tile", aes(fill = after_stat(density)), contour = FALSE) +
+          geom_point(colour = "white") + theme_minimal() +
+          geom_smooth() +  
+          theme(legend.position = "none") + labs(x = "Steps", y= "Calories (kcal)")) %>%
+          layout(xaxis = list(rangeslider = list(type = "Kroki")))
+      })
+      
+      output$individualMaciekdescribtion <- renderText({
+        "Describtion of this section"
+      })
+      output$individualMaciek1Desc <- renderText({
+        "Let's look at the chart on the right. You can manipulate the x axis by slider and y axis by typing the limit.
+        The chart shows how calories change depending on the amount of steps. 
+        If we properly check the smaller values as Steps <= 20000 and Calories <= 500 we would see the linear dependence
+        highlighted. This may suggest that those records filled around the line may be from classic walking while those 
+        records which have less steps but more Calorise buried are from cycling."
+      })
+      
+      output$individualMaciek2 <- renderPlotly({
+          Kroki_Calorie %>%
+          mutate(miesiac = factor(month(recordDay)), rok=factor(year(recordDay))) %>% 
+          filter(rok != "2019") %>% 
+          group_by(miesiac, rok) %>% summarise(n = sum(Kroki)) %>%  
+          plot_ly(x=~miesiac,y=~n,type="bar", color =~ rok) %>% 
+          layout(yaxis = list(title = "Score",tickformat = ".d"), barmode = "stack")
+      })
+      
+      output$individualMaciek2Desc <- renderText({
+        "Describtion of 2 chart"
+      })
+      
+      output$individualMaciek3 <- renderPlotly({
+        ggplotly(HeartRate_Maciek %>%
+          mutate(mean_pulse = mean(avgPulse),rok = factor(year(recordDay))) %>% 
+          filter(rok != "2019") %>% 
+          ggplot(aes(x = recordDay, y = avgPulse)) + 
+          scale_x_datetime(labels = date_format("%Y-%m"), breaks = date_breaks("months")) + 
+          geom_line(color = "darkred") +
+          geom_hline(aes(yintercept = mean_pulse, color = "Average overall"), linetype = "dashed", size = 1) +
+          labs(x = "",
+               y = "beats per minute",
+               color = "") +
+          theme_minimal() +
+          theme(axis.text.x = element_text(angle = 45, hjust = 1)))
+      })
+      
+      output$individualMaciek3Desc <- renderText({
+        "Describtion of 3 chart"
       })
       
     
