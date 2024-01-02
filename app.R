@@ -12,7 +12,7 @@ library(scales)
 library(leaflet)
 library(geosphere)
 library(htmlwidgets)
-#setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
+setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
 activities_Ola <- read.csv("activities_Ola.csv")
 ActivitiesTogether <- read.csv("ActivitiesTogether_Maciek.csv")
 ActivitiesTogether$startTime <- as.POSIXct(ActivitiesTogether$startTime, format = "%Y-%m-%d %H:%M:%S")
@@ -240,10 +240,23 @@ body <- dashboardBody(
                   )
             ),
             fluidRow(
-              box(title = "Average heart rate per month",
+              box(title = "Average heart rate during exercising per month",
                   plotlyOutput("individualMaciek3"),
                   width = 12
                   )
+            ),
+            fluidRow(
+              box(           
+                selectInput("zmienna_heat",
+                            "Choose the variable to analyse",
+                            zmienne_heat),
+                width = 2),
+              box(title = textOutput("individualMaciek4PlotTitle"),
+                  plotlyOutput("individualMaciek4"),
+                  width = 5),
+              box(title = textOutput("individualMaciek5PlotTitle"),
+                  plotlyOutput("individualMaciek5"),
+                  width = 5)
             )
     )
     
@@ -536,6 +549,68 @@ server <- function(input, output) {
       
       output$individualMaciek3Desc <- renderText({
         "Describtion of 3 chart"
+      })
+      
+      output$individualMaciek4 <- renderPlotly({
+        custom_colors <- c("black", "yellow")
+        if(input$zmienna_heat == "Number of records"){
+          output$individualMaciek4PlotTitle <- renderText({"Number of records in each month"})
+          df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Maciek") %>% group_by(Osoba,Month) %>% summarise(score=n())
+        }
+        if(input$zmienna_heat == "Distance (km)"){
+          output$individualMaciek4PlotTitle <- renderText({"Distance (km) in each month"})
+          df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Maciek") %>% group_by(Osoba,Month) %>% summarise(score = sum(Dystans))
+        }
+        if(input$zmienna_heat == "Time (minutes)"){
+          output$individualMaciek4PlotTitle <- renderText({"Time (minutes) in each month"})
+          df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Maciek") %>% group_by(Osoba,Month) %>% summarise(score = sum(Czas))
+        }
+        plot_ly(df, 
+                x=~Osoba, 
+                y=~Month, 
+                z=~score, 
+                type="heatmap",
+                colors = custom_colors,
+                colorbar = list(tickformat = ".d"),
+                text = ~paste("Person: ", Osoba, "<br>Month: ", Month, paste("<br>",input$zmienna_heat, ":"), score),
+                hoverinfo = "text"
+        ) %>% 
+          layout( 
+            xaxis = list(title = ""),
+            yaxis = list(title="Month",tickmode = "array", tickvals = unique(df$Month), 
+                         ticktext = unique(df$Month))
+          )
+      })
+      
+      output$individualMaciek5 <- renderPlotly({
+        custom_colors <- c("black", "yellow")
+        if(input$zmienna_heat == "Number of records"){
+          output$individualMaciek5PlotTitle <- renderText({"Number of records in each day"})
+          df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Maciek") %>% group_by(Osoba,Day) %>% summarise(score=n())
+        }
+        if(input$zmienna_heat == "Distance (km)"){
+          output$individualMaciek5PlotTitle <- renderText({"Distance (km) in each day"})
+          df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Maciek") %>% group_by(Osoba,Day) %>% summarise(score = sum(Dystans))
+        }
+        if(input$zmienna_heat == "Time (minutes)"){
+          output$individualMaciek5PlotTitle <- renderText({"Time (minutes) in each day"})
+          df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Maciek") %>% group_by(Osoba,Day) %>% summarise(score = sum(Czas))
+        }
+        plot_ly(df, 
+                x=~Osoba, 
+                y=~Day, 
+                z=~score, 
+                type="heatmap",
+                colors = custom_colors,
+                colorbar = list(tickformat = ".d"),
+                text = ~paste("Person: ", Osoba, "<br>Day: ", Day, paste("<br>",input$zmienna_heat, ":"), score),
+                hoverinfo = "text"
+        ) %>% 
+          layout( 
+            xaxis = list(title = ""),
+            yaxis = list(title="Day",tickmode = "array", tickvals = unique(df$Day), 
+                         ticktext = unique(df$Day))
+          )
       })
       
     
