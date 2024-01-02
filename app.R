@@ -105,8 +105,11 @@ body <- dashboardBody(
                             choices = c("1","2","3","4","5")))
               )),
             fluidRow(
-              box(leafletOutput("mapOfTrack"))
-            )
+              box(leafletOutput("mapOfTrack")),
+              box(title="Track description",
+                  textOutput("descriptionOfTrack"),width = 6)
+            ),
+            
     ),
     tabItem(tabName = "individualKuba"),
     
@@ -431,6 +434,42 @@ server <- function(input, output) {
       Each color represents respective speed. Shades of green are used for presenting lower speeds, such as 0 km/h or 10 km/h. 
       Yellow and green color mixtures represent values of speed in range from 10 km/h to 20km/h. Yellow color corresponds to the value of 20km/h,
       red stands for every speed that is equal to 40 km/h or greater than it. Shades of mixed yellow and red are for values between 20 km/h and 40 km/h."
+    })
+    
+    output$descriptionOfTrack <- renderText({
+      text_Kuba_1<-"Aa"
+      text_Kuba_2<-"Bb"
+      text_Kuba_3<-"Cc"
+      text_Kuba_4<-"Dd"
+      text_Kuba_5<-"Ee"
+      text_Maciek_1<-"Aa"
+      text_Maciek_2<-"Bb"
+      text_Maciek_3<-"Cc"
+      text_Maciek_4<-"Dd"
+      text_Maciek_5<-"Ee"
+      
+      text_Ola_1<-": On September 2nd, I decided to go for a bike ride along one of my favourite routes, known as the \"around the chimneys\" trail. 
+        No, it doesn't mean that I passed by chimneys along the way. In my family, we refer to routes that lead through villages near our town as \"around the chimneys\" trails. 
+        The route mainly follows side roads, so there isn't too much traffic on it, which makes this route really nice."
+      
+      text_Ola_2<-"A quick trip to the Wisła, unfortunately, this time without a break for splashing in the water. 
+        This route is a very pleasant option for a slightly longer excursion. On the morning of August 13th, I took this route with my dad – a huge cycling enthusiast. 
+        It was a very successful outing. Unfortunately, this route has one drawback – crossing a very busy street, which can be challenging and sometimes dangerous."
+      
+      text_Ola_3<-"A quick ride to Kołbiel with a satisfying average speed of 27.6 km/h. On the way to Kołbiel, 
+        I rode along the express road S17, which wasn't the most enjoyable due to the noise from the busy street. However, on the way back home, 
+        I took the route through the surrounding villages, which was significantly more pleasant."
+      
+      text_Ola_4<-"On July 23rd, I embarked on another cycling adventure, heading to Parysów, a beautiful town with a charming market square. 
+        Just before entering the town, there's a steep hill, which climbing up is always a huge challenge. Afterward, I headed towards Michałówka. 
+        Initially, I planned to return through Osieck. Unfortunately, it was a very hot July morning, and I could feel strength in my legs fading. 
+        In Huta, I decided to shorten my route by a few kilometres and head back home."
+      
+      text_Ola_5<-"The cycling trip from June 11th is one of my favourites. Along the way, I encountered a group of cyclists who suggested that I join them. I gladly agreed. 
+        Riding in a peloton is a completely different experience. Following behind other cyclists is much easier, and I don't tire as quickly. 
+        The new friends turned out to be a very cool group of people. I hope we'll catch up on the road again!"
+      
+      eval(parse(text=paste("text",input$track,input$number_of_track,sep="_")))
     })
       
       
