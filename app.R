@@ -12,7 +12,8 @@ library(scales)
 library(leaflet)
 library(geosphere)
 library(htmlwidgets)
-setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
+
+#setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
 activities_Ola <- read.csv("activities_Ola.csv")
 ActivitiesTogether <- read.csv("ActivitiesTogether_Maciek.csv")
 ActivitiesTogether$startTime <- as.POSIXct(ActivitiesTogether$startTime, format = "%Y-%m-%d %H:%M:%S")
@@ -145,7 +146,7 @@ body <- dashboardBody(
               ),
             
             fluidRow(
-              box(plotOutput("scatterPlot"), width = 6),
+              box(plotOutput("densityPlot"), width = 6),
               
               box(width = 6)
             )
@@ -319,6 +320,8 @@ server <- function(input, output) {
     
     output$violinPlot <- renderPlot({
       
+      activities_Ola$Type <- factor(activities_Ola$Type, levels = c("Short", "Medium", "Long"))
+      
       activities_Ola %>%
         filter(Osoba == input$person)-> activities_plot
       
@@ -335,19 +338,37 @@ server <- function(input, output) {
       
     })
     
-    output$scatterPlot <- renderPlot({
+    # output$scatterPlot <- renderPlot({
+    #   
+    #   activities_Ola %>%
+    #     filter(Osoba == input$person)-> activities_plot
+    #   
+    #   ggplot(activities_plot, aes(x = as.numeric(DurationMinutes), y = as.numeric(AvgSpeed), color = Type)) +
+    #     geom_point(size = 3) +
+    #     scale_fill_manual(values = c("chartreuse4", "dodgerblue2", "brown2")) +
+    #     labs(title = "Duration vs Speed",
+    #          x = "Duration",
+    #          y = "Average Speed") +
+    #     theme_minimal()+
+    #     theme(plot.title = element_text(hjust = 0.5))
+    #   
+    # })
+    
+    output$densityPlot <- renderPlot({
+      
+      activities_Ola$Type <- factor(activities_Ola$Type, levels = c("Short", "Medium", "Long"))
       
       activities_Ola %>%
         filter(Osoba == input$person)-> activities_plot
       
-      ggplot(activities_plot, aes(x = as.numeric(DurationMinutes), y = as.numeric(AvgSpeed), color = Type)) +
-        geom_point(size = 3) +
+      ggplot(activities_plot, aes(x = Hour, fill = Type)) +
+        geom_density(alpha = 0.6) +
         scale_fill_manual(values = c("chartreuse4", "dodgerblue2", "brown2")) +
-        labs(title = "Duration vs Speed",
-             x = "Duration",
-             y = "Average Speed") +
+        labs(title = "Density Plot of Activity Distribution Across Hours",
+             x = "Hour") +
         theme_minimal()+
-        theme(plot.title = element_text(hjust = 0.5))
+        theme(legend.position = "none", plot.title = element_text(hjust = 0.5),
+              axis.title.y = element_blank())
       
     })
     
