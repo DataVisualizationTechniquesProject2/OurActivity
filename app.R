@@ -437,11 +437,35 @@ server <- function(input, output) {
     })
     
     output$descriptionOfTrack <- renderText({
-      text_Kuba_1<-"Aa"
-      text_Kuba_2<-"Bb"
-      text_Kuba_3<-"Cc"
-      text_Kuba_4<-"Dd"
-      text_Kuba_5<-"Ee"
+      text_Kuba_1<-"Monday, 5th of September 2022 at first glance did not seem to become a day, when I set my longest bike trip.  
+        The starting time of the ride did not indicate that it would be one of the most amazing trips. 
+        I messaged my friend Michał, and we met each other on the Most Południowy at 1:00 PM. We planned to reach our beloved Góra Kalwaria and then decide what to do next. 
+        Everything went as planned, we also had a decent average speed, the weather was fantastic, so we decided to extend our ride and go to Warka. 
+        We have been there quite a few times, but the road to Warka is always really demanding. There are a lot of trucks, so you have to keep the pace and be really cautious. 
+        It wasn’t easy at all, but we have made to the city. We stayed there for a several minutes, chilled a little bit, and then started coming back. The route to Warsaw was completed without any major obstacles. 
+        We had a really good average speed, I was feeling that my muscles aren’t that tired, so I have decided to extend the ride in Warsaw. 
+        I managed to do extra 50 kilometres, I was extremely exhausted, but also very happy of this achievement."
+      
+      text_Kuba_2<-"I have been planning this trip with my bike comrade Michał for a year. 
+       We couldn’t find the time for it, but finally on the last day of summer holidays, on 31.08.2021 we managed to realize our “dream”. Until we reached Warka, we didn’t have much difficulties. 
+       The troubles began after leaving the city. We did not know the route perfectly and even with GPS we had difficulties. We landed in forest two times, the road surface was terrible, we were moving with really low speed. 
+       But in the end, we reached our destination. We didn’t have time to stay there, as the departure time of train was near."
+      
+      text_Kuba_3<-"The route to Warka on June 22nd 2022 was another trip to our liked place. 
+        We started cycling around 10:00 AM. The weather was quite bearable, there was around 22°C. The trip was mostly peaceful. We did not have any troubles and difficulties. 
+        We stayed and chilled in Warka for some time and managed to comeback to Warsaw without any unexpected adventures. In the meantime we had a stop at our favourite grocery shop in Góra Kalwaria. 
+        We recharged our batteries and rode with quite good pace to our final destination."
+      
+      text_Kuba_4<-"This trip was the only one from considered routes, that I rode alone. It was just an ordinary trip do Góra Kalwaria. However I did it on Sunday, which was actually quite surprising, because I usually don’t go cycling on that day. 
+        I felt power on that day, as the average speed shows –  26,2 km/h. I did the first part in less than hour, I felt huge exhaust, so the second part was much more difficult. 
+        However I managed to return to home with a lot of effort, but the prize waiting in home – lying on the bed and resting – was infusing hope and peace."
+      
+      text_Kuba_5<-"The last trip is the oldest one – from 29 June 2021. It was not filled with high speed, however it was quite interesting. 
+       Me and my two friends decided to visit Zalew Zegrzyński. We rode through Jabłonna and Legionowo quite peacefully. Then we reached Nieporęt, our expected destination. 
+       Even though we did not have bath costumes, we have decided to splash a little. It was really hot, so the danger of catching a cold was rather negligible. However it wasn’t the end of bathing. 
+       Our friend’s girlfriend called him and asked whether him whether we would like to join her in Zielonka. We were really enthusiastic about it and quickly rode there. We had quite a lot of fun there too and then we finally split up and ended in our homes. I managed to do 100 km, so that’s a lovely result. 
+       Great fun, which was there will certainly stay in my heart for a long time."
+      
       text_Maciek_1<-"Aa"
       text_Maciek_2<-"Bb"
       text_Maciek_3<-"Cc"
