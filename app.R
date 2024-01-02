@@ -9,7 +9,10 @@ library(tidyverse)
 library(viridis)
 library(htmltools)
 library(scales)
-setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
+library(leaflet)
+library(geosphere)
+library(htmlwidgets)
+#setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
 activities_Ola <- read.csv("activities_Ola.csv")
 ActivitiesTogether <- read.csv("ActivitiesTogether_Maciek.csv")
 ActivitiesTogether$startTime <- as.POSIXct(ActivitiesTogether$startTime, format = "%Y-%m-%d %H:%M:%S")
@@ -82,8 +85,28 @@ body <- dashboardBody(
     
     ### Kuba ###
     
-    tabItem(tabName = "top5"),
-    
+       tabItem(tabName = "top5",
+           
+            fluidRow(
+              box(title = "Top 5 tracks",
+                  textOutput("top5description")),
+              box(sidebarMenu(id = "sidebarmenuTop5",
+                              selectInput(
+                                inputId = "track",
+                                label = "Choose person:",
+                                choices = c("Kuba", "Maciek", "Ola"))
+                              
+              ),
+              sidebarMenu(id="sidebarmenuTrack",
+                          selectInput(
+                            inputId = "number_of_track",
+                            label = "Choose interesting track:",
+                            choices = c("1","2","3","4","5")))
+              )),
+            fluidRow(
+              box(leafletOutput("mapOfTrack"))
+            )
+    ),
     tabItem(tabName = "individualKuba"),
     
     
@@ -152,7 +175,7 @@ body <- dashboardBody(
                            ),
                 sliderInput("zakres",
                             "Choose the range of years",
-                            value = c(min(ActivitiesTogether$Rok), max(ActivitiesTogether$Rok)),
+                            value = c(min(2020), max(ActivitiesTogether$Rok)),
                             min = 2020,
                             max = max(ActivitiesTogether$Rok),
                             step = 1),
@@ -331,7 +354,50 @@ server <- function(input, output) {
       
       ### Kuba ###
       
-      
+    output$mapOfTrack <- renderLeaflet(
+      {
+        mydata<-read.csv(paste("Top5_Activities\\activity_",input$track,"_",input$number_of_track,".csv",sep=""))
+        mydata$ele<-mydata$speed
+        hotlinePlugin <- htmltools::htmlDependency(
+          name = 'Leaflet.hotline',
+          version = "0.4.0",
+          src = c(file = normalizePath("hotline_plugin")),
+          script = "leaflet.hotline.js"
+        )
+        
+        registerPlugin <- function( map, plugin ) {
+          map$dependencies <- c( map$dependencies, list( plugin ) )
+          map
+        }
+        palette<- colorNumeric(palette = colorRampPalette(c("#008800","#ffff00","#ff0000"))(5),
+                               domain = 0:40)
+        
+        mydata %>% group_by(kilometer) %>% slice(tail(which.max(row_number()),1)) -> last_lon_lat_each_km
+        mydata %>% group_by(kilometer) %>% summarize(mean_speed=mean(speed)) -> avg_speed_per_km
+        
+        coords_of_kilometers<-last_lon_lat_each_km %>% left_join(avg_speed_per_km,by="kilometer") %>% select(lat,lon,kilometer,mean_speed)
+        
+        paste("Kilometer: ","<strong>",coords_of_kilometers$kilometer,"</strong>","<br>Average speed: ","<strong>",round(coords_of_kilometers$mean_speed,2),"</strong>",sep="") %>%
+          lapply(htmltools::HTML) -> labels
+        
+        leaflet() %>% addTiles() %>%
+          fitBounds( min(mydata$lon), min(mydata$lat), max(mydata$lon), max(mydata$lat) ) %>%
+          registerPlugin(hotlinePlugin) %>%
+          onRender("function(el, x, data) {
+            data = HTMLWidgets.dataframeToD3(data);
+            data = data.map(function(val) { return [val.lat, val.lon, val.ele]; });
+            L.hotline(data, {min: 0, max: 40}).addTo(this);
+          }", data = mydata ) %>% addLegend("bottomright",pal=palette,values=0:40,opacity=1,title="Speed [km/h]") %>% 
+          addCircleMarkers(data=coords_of_kilometers,lat=~lat,lng=~lon,label=~labels,fillColor="blue",fillOpacity=1,stroke=F,radius=3)
+        
+      }
+    )
+    output$top5description <- renderText({
+      "Explore our most interesting tracks. The map consists track route, which is coloured in various colors.
+      Each color represents respective speed. Shades of green are used for presenting lower speeds, such as 0 km/h or 10 km/h. 
+      Yellow and green color mixtures represent values of speed in range from 10 km/h to 20km/h. Yellow color corresponds to the value of 20km/h,
+      red stands for every speed that is equal to 40 km/h or greater than it. Shades of mixed yellow and red are for values between 20 km/h and 40 km/h."
+    })
       
       
       ### Maciek ###
