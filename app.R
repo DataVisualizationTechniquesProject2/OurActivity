@@ -466,7 +466,7 @@ server <- function(input, output) {
        Our friend’s girlfriend called him and asked whether him whether we would like to join her in Zielonka. We were really enthusiastic about it and quickly rode there. We had quite a lot of fun there too and then we finally split up and ended in our homes. I managed to do 100 km, so that’s a lovely result. 
        Great fun, which was there will certainly stay in my heart for a long time."
       
-      text_Maciek_1<-"Aa"
+      text_Maciek_1<-"Aaas"
       text_Maciek_2<-"Bb"
       text_Maciek_3<-"Cc"
       text_Maciek_4<-"Dd"
