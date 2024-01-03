@@ -15,6 +15,7 @@ library(htmlwidgets)
 
 #setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
 activities_Ola <- read.csv("activities_Ola.csv")
+ActivitiesIndividual_Ola <- read.csv("ActivitiesIndividual_Ola.csv")
 ActivitiesTogether <- read.csv("ActivitiesTogether_Maciek.csv")
 ActivitiesTogether$startTime <- as.POSIXct(ActivitiesTogether$startTime, format = "%Y-%m-%d %H:%M:%S")
 ActivitiesTogether$Rok <- format(ActivitiesTogether$startTime, "%Y")
@@ -158,9 +159,20 @@ body <- dashboardBody(
     tabItem(tabName = "individualOla",
             
             fluidRow(
-              box(title = "Individual Statistics Ola")
-              
+              box(title = "Individual Statistics Ola", width = 6),
+              box(plotOutput("individualOla1"), width = 6)
+            ),
+            
+            fluidRow(
+              box(title =  "Analyzing the Diversity of Bike Adventures",
+                  selectInput("yearChoice",
+                              "Activity from which year do your want to see?",
+                              unique(ActivitiesIndividual_Ola$Year)),
+                plotlyOutput("individualOla2"),
+                plotlyOutput("individualOla3"),
+                width = 12)
             )
+            
             
             ),
     
@@ -387,6 +399,85 @@ server <- function(input, output) {
       Categories (short, long, medium) are color-coded, and above slider let 
       you focus on specific years.Thanks to this chart, we can see our 
       preferences regarding track length and how they have changed over the years."
+    })
+    
+    # individual
+    
+    output$individualOla1 <- renderPlot({
+      
+      ActivitiesIndividual_Ola %>%
+        filter(Średnie.tętno != 0) %>% 
+        ggplot(aes(x = Średnie.tętno, y = Średnia.prędkość, color = Dystans, size = Dystans)) +
+        geom_point() +
+        scale_color_gradient(low = "#94edff", high = "#7C065C", name = "Distance [km]") +
+        scale_size_continuous(range = c(1, 6), name = "Distance [km]") +
+        labs(
+          title = "Relation between Average Speed and Average Pulse",
+          x = "Average Pulse",
+          y = "Average Speed [km/h]"
+        ) +
+        guides(color = guide_legend(title = "Distance [km]")) +
+        theme_minimal()+
+        theme(plot.title = element_text(hjust = 0.5))
+      
+    })
+    
+    
+    output$individualOla2 <- renderPlotly({
+      
+      ActivitiesIndividual_Ola %>% 
+        filter(ActivitiesIndividual_Ola$Year == input$yearChoice)  %>% 
+        filter(Średni.rytm.pedałowania != 0 & Średnie.tętno != 0) -> activities_Ola_plot
+      
+      activities_Ola_plot$Data <- as.POSIXct(activities_Ola_plot$Data, format = "%Y-%m-%d %H:%M:%S")
+      activities_Ola_plot %>% 
+        mutate(Data = format(Data, "%m-%d")) -> activities_Ola_plot
+      
+      plot_ly(
+        data = activities_Ola_plot, 
+        x = ~as.factor(Data),
+        text = paste("Date: ", activities_Ola_plot$Data, "<br>Distance: ", activities_Ola_plot$Dystans,
+                     "<br>Time: ", activities_Ola_plot$Czas),
+        hoverinfo = 'text') %>%
+        add_lines(y = ~Średnie.tętno, name = "Average Pulse", line = list(color = "blue")) %>%
+        add_lines(y = ~Maksymalne.tętno, name = "Max Pulse", line = list(color = "red")) %>%
+        layout(title = "Average and Max Pulse",
+               xaxis = list(title = "Date", tickangle = -60),
+               yaxis = list(title = "Pulse"),
+               margin = list(t = 100))
+      
+      
+    })
+    
+    output$individualOla3 <- renderPlotly({
+      
+      ActivitiesIndividual_Ola %>% 
+        filter(ActivitiesIndividual_Ola$Year == input$yearChoice)  %>% 
+        filter(Średni.rytm.pedałowania != 0 & Średnie.tętno != 0) -> activities_Ola_plot
+      
+      activities_Ola_plot$Data <- as.POSIXct(activities_Ola_plot$Data, format = "%Y-%m-%d %H:%M:%S")
+      activities_Ola_plot %>% 
+        mutate(Data = format(Data, "%m-%d")) -> activities_Ola_plot
+      
+      my_color_scale = list(list(0,"#94edff"),
+                            list(1, "#7C065C"))
+      
+      plot_ly(
+        data = activities_Ola_plot, 
+        x = ~as.factor(Data))%>%
+        add_bars(y = ~Średni.rytm.pedałowania, name = "Average Pedaling Rhythm", type = "bar",
+                 marker = list(color = ~Łącznie.obrotów, colorscale = my_color_scale,
+                               colorbar = list(title = "Total Number of Turns",
+                                               len = .6, outlinewidth = 0,
+                                               tickfont = list(size = 10)))) %>%
+        add_lines(y = ~Maksymalny.rytm.pedałowania, name = "Max Pedaling Rhythm", line = list(color = "#7C065C")) %>%
+        layout(title = "Average and Max Pedaling Rhythm",
+               xaxis = list(title = "Date", tickangle = -50),
+               yaxis = list(title = "Number of turns per minute"),
+               margin = list(t = 70, r = 5),
+               showlegend = TRUE) 
+      
+      
     })
       
       ### Kuba ###
