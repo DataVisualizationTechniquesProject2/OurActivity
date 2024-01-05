@@ -112,7 +112,21 @@ body <- dashboardBody(
             ),
             
     ),
-    tabItem(tabName = "individualKuba"),
+    tabItem(tabName = "individualKuba",
+            fluidRow(
+              box(           
+                selectInput("zmienna_heat",
+                            "Choose the variable to analyse",
+                            zmienne_heat),
+                width = 2),
+              box(title = textOutput("individualKuba4PlotTitle"),
+                  plotlyOutput("individualKuba4"),
+                  width = 5),
+              box(title = textOutput("individualKuba5PlotTitle"),
+                  plotlyOutput("individualKuba5"),
+                  width = 5)
+            )
+            ),
     
     
     ### Ola ###
@@ -171,6 +185,19 @@ body <- dashboardBody(
                 plotlyOutput("individualOla2"),
                 plotlyOutput("individualOla3"),
                 width = 12)
+            ),
+            fluidRow(
+              box(           
+                selectInput("zmienna_heat",
+                            "Choose the variable to analyse",
+                            zmienne_heat),
+                width = 2),
+              box(title = textOutput("individualOla4PlotTitle"),
+                  plotlyOutput("individualOla4"),
+                  width = 5),
+              box(title = textOutput("individualOla5PlotTitle"),
+                  plotlyOutput("individualOla5"),
+                  width = 5)
             )
             
             
@@ -479,6 +506,67 @@ server <- function(input, output) {
       
       
     })
+    output$individualOla4 <- renderPlotly({
+      custom_colors <- c("black", "yellow")
+      if(input$zmienna_heat == "Number of records"){
+        output$individualOla4PlotTitle <- renderText({"Number of records in each month"})
+        df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Ola") %>% group_by(Osoba,Month) %>% summarise(score=n())
+      }
+      if(input$zmienna_heat == "Distance (km)"){
+        output$individualOla4PlotTitle <- renderText({"Distance (km) in each month"})
+        df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Ola") %>% group_by(Osoba,Month) %>% summarise(score = sum(Dystans))
+      }
+      if(input$zmienna_heat == "Time (minutes)"){
+        output$individualOla4PlotTitle <- renderText({"Time (minutes) in each month"})
+        df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Ola") %>% group_by(Osoba,Month) %>% summarise(score = sum(Czas))
+      }
+      plot_ly(df,
+              x=~Osoba,
+              y=~Month,
+              z=~score,
+              type="heatmap",
+              colors = custom_colors,
+              colorbar = list(tickformat = ".d"),
+              text = ~paste("Person: ", Osoba, "<br>Month: ", Month, paste("<br>",input$zmienna_heat, ":"), score),
+              hoverinfo = "text"
+      ) %>%
+        layout(
+          xaxis = list(title = ""),
+          yaxis = list(title="Month",tickmode = "array", tickvals = unique(df$Month),
+                       ticktext = unique(df$Month))
+        )
+    })
+
+    output$individualOla5 <- renderPlotly({
+      custom_colors <- c("black", "yellow")
+      if(input$zmienna_heat == "Number of records"){
+        output$individualOla5PlotTitle <- renderText({"Number of records in each day"})
+        df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Ola") %>% group_by(Osoba,Day) %>% summarise(score=n())
+      }
+      if(input$zmienna_heat == "Distance (km)"){
+        output$individualOla5PlotTitle <- renderText({"Distance (km) in each day"})
+        df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Ola") %>% group_by(Osoba,Day) %>% summarise(score = sum(Dystans))
+      }
+      if(input$zmienna_heat == "Time (minutes)"){
+        output$individualOla5PlotTitle <- renderText({"Time (minutes) in each day"})
+        df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Ola") %>% group_by(Osoba,Day) %>% summarise(score = sum(Czas))
+      }
+      plot_ly(df,
+              x=~Osoba,
+              y=~Day,
+              z=~score,
+              type="heatmap",
+              colors = custom_colors,
+              colorbar = list(tickformat = ".d"),
+              text = ~paste("Person: ", Osoba, "<br>Day: ", Day, paste("<br>",input$zmienna_heat, ":"), score),
+              hoverinfo = "text"
+      ) %>%
+        layout(
+          xaxis = list(title = ""),
+          yaxis = list(title="Day",tickmode = "array", tickvals = unique(df$Day),
+                       ticktext = unique(df$Day))
+        )
+    })
       
       ### Kuba ###
       
@@ -557,11 +645,19 @@ server <- function(input, output) {
        Our friend’s girlfriend called him and asked whether him whether we would like to join her in Zielonka. We were really enthusiastic about it and quickly rode there. We had quite a lot of fun there too and then we finally split up and ended in our homes. I managed to do 100 km, so that’s a lovely result. 
        Great fun, which was there will certainly stay in my heart for a long time."
       
-      text_Maciek_1<-"Aa"
-      text_Maciek_2<-"Bb"
-      text_Maciek_3<-"Cc"
-      text_Maciek_4<-"Dd"
-      text_Maciek_5<-"Ee"
+      text_Maciek_1<-"On 3rd of June 2022 just after mature exams with my friends we decided to take a trip around the suburbs of Zamość to celebrate
+      the end of the school year and spend some time on fresh air after months of studying. It took us about 7,5 hours and I buried almost 1700 kcal. 
+      It was great experience because we were aware that we had 4 months of vacation ahead of us"
+      text_Maciek_2<-"This is just one of my favourite routes in Zamość. Take a look :)."
+      text_Maciek_3<-"On 28th of August 2023 I decided to do a challenge to beat my previous record in riding to my girlfriend as fast as possible.
+      And so I did it. 9 kilometers with average speed 22 km/h. It was really challenging and in the end I was sweating so much that I had to take a
+      shower and change clothes which were soaked. But it was fantastic day and I won't forget it."
+      text_Maciek_4<-"On 29th of May 2020 I rode with a group of friends to the lagoon nearby Zamość. A really bumpy road with lots of challenging hills.
+      As it was just after lockdown caused by COVID we were so happy to finally leave our houses and meet up for this adventure. The road shown on the chart
+      is only one way. While we were returning it was significantly easier, because we were going downhill and all in all we made about 70 km this day."
+      text_Maciek_5<-"And finally Warsaw. My first longer trip took place on 29th of July 2023. I transported my bike from my home town and started
+      sightseeing the surroundings. A large part of the ride was in Wilanów, because I really enjoyed this district and couldn't leave it. All the time there was
+      something interesting there that I wanted to check."
       
       text_Ola_1<-": On September 2nd, I decided to go for a bike ride along one of my favourite routes, known as the \"around the chimneys\" trail. 
         No, it doesn't mean that I passed by chimneys along the way. In my family, we refer to routes that lead through villages near our town as \"around the chimneys\" trails. 
@@ -585,6 +681,67 @@ server <- function(input, output) {
         The new friends turned out to be a very cool group of people. I hope we'll catch up on the road again!"
       
       eval(parse(text=paste("text",input$track,input$number_of_track,sep="_")))
+    })
+    output$individualKuba4 <- renderPlotly({
+      custom_colors <- c("black", "yellow")
+      if(input$zmienna_heat == "Number of records"){
+        output$individualKuba4PlotTitle <- renderText({"Number of records in each month"})
+        df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Kuba") %>% group_by(Osoba,Month) %>% summarise(score=n())
+      }
+      if(input$zmienna_heat == "Distance (km)"){
+        output$individualKuba4PlotTitle <- renderText({"Distance (km) in each month"})
+        df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Kuba") %>% group_by(Osoba,Month) %>% summarise(score = sum(Dystans))
+      }
+      if(input$zmienna_heat == "Time (minutes)"){
+        output$individualKuba4PlotTitle <- renderText({"Time (minutes) in each month"})
+        df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Kuba") %>% group_by(Osoba,Month) %>% summarise(score = sum(Czas))
+      }
+      plot_ly(df,
+              x=~Osoba,
+              y=~Month,
+              z=~score,
+              type="heatmap",
+              colors = custom_colors,
+              colorbar = list(tickformat = ".d"),
+              text = ~paste("Person: ", Osoba, "<br>Month: ", Month, paste("<br>",input$zmienna_heat, ":"), score),
+              hoverinfo = "text"
+      ) %>%
+        layout(
+          xaxis = list(title = ""),
+          yaxis = list(title="Month",tickmode = "array", tickvals = unique(df$Month),
+                       ticktext = unique(df$Month))
+        )
+    })
+    
+    output$individualKuba5 <- renderPlotly({
+      custom_colors <- c("black", "yellow")
+      if(input$zmienna_heat == "Number of records"){
+        output$individualKuba5PlotTitle <- renderText({"Number of records in each day"})
+        df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Kuba") %>% group_by(Osoba,Day) %>% summarise(score=n())
+      }
+      if(input$zmienna_heat == "Distance (km)"){
+        output$individualKuba5PlotTitle <- renderText({"Distance (km) in each day"})
+        df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Kuba") %>% group_by(Osoba,Day) %>% summarise(score = sum(Dystans))
+      }
+      if(input$zmienna_heat == "Time (minutes)"){
+        output$individualKuba5PlotTitle <- renderText({"Time (minutes) in each day"})
+        df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Kuba") %>% group_by(Osoba,Day) %>% summarise(score = sum(Czas))
+      }
+      plot_ly(df,
+              x=~Osoba,
+              y=~Day,
+              z=~score,
+              type="heatmap",
+              colors = custom_colors,
+              colorbar = list(tickformat = ".d"),
+              text = ~paste("Person: ", Osoba, "<br>Day: ", Day, paste("<br>",input$zmienna_heat, ":"), score),
+              hoverinfo = "text"
+      ) %>%
+        layout(
+          xaxis = list(title = ""),
+          yaxis = list(title="Day",tickmode = "array", tickvals = unique(df$Day),
+                       ticktext = unique(df$Day))
+        )
     })
       
       
@@ -688,10 +845,10 @@ server <- function(input, output) {
       })
       output$individualMaciek1Desc <- renderText({
         "Let's look at the chart on the right. You can manipulate the x axis by slider and y axis by typing the limit.
-        The chart shows how calories change depending on the amount of steps. 
+        The chart shows how calories change depending on the amount of steps. Each white dot shows calories buried and steps made in each day. 
         If we properly check the smaller values as Steps <= 20000 and Calories <= 500 we would see the linear dependence
-        highlighted. This may suggest that those records filled around the line may be from classic walking while those 
-        records which have less steps but more Calorise buried are from cycling."
+        highlighted. This may suggest that those records are days in which I did not ride a bike and I was only walking, whereas records with
+        less steps and more calories buried are days in which I did excercise on bike and did not walk that much."
       })
       
       output$individualMaciek2 <- renderPlotly({
@@ -700,11 +857,15 @@ server <- function(input, output) {
           filter(rok != "2019") %>% 
           group_by(miesiac, rok) %>% summarise(n = sum(Kroki)) %>%  
           plot_ly(x=~miesiac,y=~n,type="bar", color =~ rok) %>% 
-          layout(yaxis = list(title = "Score",tickformat = ".d"), barmode = "stack")
+          layout(yaxis = list(title = "Steps",tickformat = ".d"),
+                 xaxis = list(title="month"),
+                 barmode = "stack")
       })
       
       output$individualMaciek2Desc <- renderText({
-        "Describtion of 2 chart"
+        "This chart shows us how amount of steps depend on the month. As you can notice there is a significant difference between summer months
+        and month in winter. I walk most often during summer break in June,July,August and September. As you can also see in 2020 I used to take walks
+        almost in every month and I made more steps comparing to other years. That may be due to more freetime and less responibilities."
       })
       
       output$individualMaciek3 <- renderPlotly({
@@ -723,7 +884,9 @@ server <- function(input, output) {
       })
       
       output$individualMaciek3Desc <- renderText({
-        "Describtion of 3 chart"
+        "The chart below shows the change of my heart rate in each day of the years during excercising. It's easy to see that in winter months
+        there were less records, while during summer this line plot breaks often. In 2020 my heart rate was a little higher than in 
+        2021,2022 and 2023. THe average is around 93 beats per minute."
       })
       
       output$individualMaciek4 <- renderPlotly({
