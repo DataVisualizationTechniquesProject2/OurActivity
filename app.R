@@ -24,7 +24,6 @@ ActivitiesTogether$Rok <- as.numeric(ActivitiesTogether$Rok)
 ActivitiesTogether$Day <- wday(ActivitiesTogether$startTime, week_start = 1)
 ActivitiesTogether$Month <- month(ActivitiesTogether$startTime)
 zmienne = c("Distance (km)", "Time (minutes)","Average Speed (km/h)")
-zmienne_heat <- c("Number of records", "Distance (km)", "Time (minutes)")
 Kroki_Calorie <- read.csv("Kroki_Kalorie_Maciek.csv")
 HeartRate_Maciek <- read.csv("HeartRate_Maciek.csv")
 HeartRate_Maciek$recordDay <- as.POSIXct(HeartRate_Maciek$recordDay)
@@ -115,7 +114,7 @@ body <- dashboardBody(
     tabItem(tabName = "individualKuba",
             fluidRow(
               box(           
-                selectInput("zmienna_heat",
+                selectInput("zmienna_heat_Kuba",
                             "Choose the variable to analyse",
                             zmienne_heat),
                 width = 2),
@@ -188,7 +187,7 @@ body <- dashboardBody(
             ),
             fluidRow(
               box(           
-                selectInput("zmienna_heat",
+                selectInput("zmienna_heat_Ola",
                             "Choose the variable to analyse",
                             zmienne_heat),
                 width = 2),
@@ -290,7 +289,7 @@ body <- dashboardBody(
             ),
             fluidRow(
               box(           
-                selectInput("zmienna_heat",
+                selectInput("zmienna_heat_Maciek",
                             "Choose the variable to analyse",
                             zmienne_heat),
                 width = 2),
@@ -508,15 +507,15 @@ server <- function(input, output) {
     })
     output$individualOla4 <- renderPlotly({
       custom_colors <- c("black", "yellow")
-      if(input$zmienna_heat == "Number of records"){
+      if(input$zmienna_heat_Ola == "Number of records"){
         output$individualOla4PlotTitle <- renderText({"Number of records in each month"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Ola") %>% group_by(Osoba,Month) %>% summarise(score=n())
       }
-      if(input$zmienna_heat == "Distance (km)"){
+      if(input$zmienna_heat_Ola == "Distance (km)"){
         output$individualOla4PlotTitle <- renderText({"Distance (km) in each month"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Ola") %>% group_by(Osoba,Month) %>% summarise(score = sum(Dystans))
       }
-      if(input$zmienna_heat == "Time (minutes)"){
+      if(input$zmienna_heat_Ola == "Time (minutes)"){
         output$individualOla4PlotTitle <- renderText({"Time (minutes) in each month"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Ola") %>% group_by(Osoba,Month) %>% summarise(score = sum(Czas))
       }
@@ -539,15 +538,15 @@ server <- function(input, output) {
 
     output$individualOla5 <- renderPlotly({
       custom_colors <- c("black", "yellow")
-      if(input$zmienna_heat == "Number of records"){
+      if(input$zmienna_heat_Ola == "Number of records"){
         output$individualOla5PlotTitle <- renderText({"Number of records in each day"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Ola") %>% group_by(Osoba,Day) %>% summarise(score=n())
       }
-      if(input$zmienna_heat == "Distance (km)"){
+      if(input$zmienna_heat_Ola == "Distance (km)"){
         output$individualOla5PlotTitle <- renderText({"Distance (km) in each day"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Ola") %>% group_by(Osoba,Day) %>% summarise(score = sum(Dystans))
       }
-      if(input$zmienna_heat == "Time (minutes)"){
+      if(input$zmienna_heat_Ola == "Time (minutes)"){
         output$individualOla5PlotTitle <- renderText({"Time (minutes) in each day"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Ola") %>% group_by(Osoba,Day) %>% summarise(score = sum(Czas))
       }
@@ -684,15 +683,15 @@ server <- function(input, output) {
     })
     output$individualKuba4 <- renderPlotly({
       custom_colors <- c("black", "yellow")
-      if(input$zmienna_heat == "Number of records"){
+      if(input$zmienna_heat_Kuba == "Number of records"){
         output$individualKuba4PlotTitle <- renderText({"Number of records in each month"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Kuba") %>% group_by(Osoba,Month) %>% summarise(score=n())
       }
-      if(input$zmienna_heat == "Distance (km)"){
+      if(input$zmienna_heat_Kuba == "Distance (km)"){
         output$individualKuba4PlotTitle <- renderText({"Distance (km) in each month"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Kuba") %>% group_by(Osoba,Month) %>% summarise(score = sum(Dystans))
       }
-      if(input$zmienna_heat == "Time (minutes)"){
+      if(input$zmienna_heat_Kuba == "Time (minutes)"){
         output$individualKuba4PlotTitle <- renderText({"Time (minutes) in each month"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Kuba") %>% group_by(Osoba,Month) %>% summarise(score = sum(Czas))
       }
@@ -715,15 +714,15 @@ server <- function(input, output) {
     
     output$individualKuba5 <- renderPlotly({
       custom_colors <- c("black", "yellow")
-      if(input$zmienna_heat == "Number of records"){
+      if(input$zmienna_heat_Kuba == "Number of records"){
         output$individualKuba5PlotTitle <- renderText({"Number of records in each day"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Kuba") %>% group_by(Osoba,Day) %>% summarise(score=n())
       }
-      if(input$zmienna_heat == "Distance (km)"){
+      if(input$zmienna_heat_Kuba == "Distance (km)"){
         output$individualKuba5PlotTitle <- renderText({"Distance (km) in each day"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Kuba") %>% group_by(Osoba,Day) %>% summarise(score = sum(Dystans))
       }
-      if(input$zmienna_heat == "Time (minutes)"){
+      if(input$zmienna_heat_Kuba == "Time (minutes)"){
         output$individualKuba5PlotTitle <- renderText({"Time (minutes) in each day"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Kuba") %>% group_by(Osoba,Day) %>% summarise(score = sum(Czas))
       }
@@ -891,15 +890,15 @@ server <- function(input, output) {
       
       output$individualMaciek4 <- renderPlotly({
         custom_colors <- c("black", "yellow")
-        if(input$zmienna_heat == "Number of records"){
+        if(input$zmienna_heat_Maciek == "Number of records"){
           output$individualMaciek4PlotTitle <- renderText({"Number of records in each month"})
           df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Maciek") %>% group_by(Osoba,Month) %>% summarise(score=n())
         }
-        if(input$zmienna_heat == "Distance (km)"){
+        if(input$zmienna_heat_Maciek == "Distance (km)"){
           output$individualMaciek4PlotTitle <- renderText({"Distance (km) in each month"})
           df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Maciek") %>% group_by(Osoba,Month) %>% summarise(score = sum(Dystans))
         }
-        if(input$zmienna_heat == "Time (minutes)"){
+        if(input$zmienna_heat_Maciek == "Time (minutes)"){
           output$individualMaciek4PlotTitle <- renderText({"Time (minutes) in each month"})
           df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Maciek") %>% group_by(Osoba,Month) %>% summarise(score = sum(Czas))
         }
@@ -922,15 +921,15 @@ server <- function(input, output) {
       
       output$individualMaciek5 <- renderPlotly({
         custom_colors <- c("black", "yellow")
-        if(input$zmienna_heat == "Number of records"){
+        if(input$zmienna_heat_Maciek == "Number of records"){
           output$individualMaciek5PlotTitle <- renderText({"Number of records in each day"})
           df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Maciek") %>% group_by(Osoba,Day) %>% summarise(score=n())
         }
-        if(input$zmienna_heat == "Distance (km)"){
+        if(input$zmienna_heat_Maciek == "Distance (km)"){
           output$individualMaciek5PlotTitle <- renderText({"Distance (km) in each day"})
           df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Maciek") %>% group_by(Osoba,Day) %>% summarise(score = sum(Dystans))
         }
-        if(input$zmienna_heat == "Time (minutes)"){
+        if(input$zmienna_heat_Maciek == "Time (minutes)"){
           output$individualMaciek5PlotTitle <- renderText({"Time (minutes) in each day"})
           df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Maciek") %>% group_by(Osoba,Day) %>% summarise(score = sum(Czas))
         }
