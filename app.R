@@ -148,7 +148,8 @@ body <- dashboardBody(
             )),
             
             fluidRow(
-              box(plotOutput("hisPlot"), width = 6),
+              box(title = "What type of routes do we most frequently choose?",
+                  plotOutput("hisPlot"), width = 6),
               
               box(sliderInput("zakres1",
                                  "Choose the range of years",
@@ -162,22 +163,21 @@ body <- dashboardBody(
             ),
             
             fluidRow(
-              box(width = 6),
+              box(title = "When do we go cycling?",
+                  plotOutput("densityPlot"),
+                  textOutput("smlchart2"), width = 6),
               
-              box(plotOutput("violinPlot"), width = 6)
-              ),
-            
-            fluidRow(
-              box(plotOutput("densityPlot"), width = 6),
-              
-              box(width = 6)
-            )
+              box(title = "Does the length of the route affect our average speed?",
+                  plotOutput("violinPlot"),
+                  textOutput("smlchart3"), width = 6)
+              )
     ),
     
     tabItem(tabName = "individualOla",
             
             fluidRow(
-              box(title = "Individual Statistics Ola", width = 6),
+              box(title = "Individual Statistics",
+                  textOutput("individual1"), width = 6),
               box(plotOutput("individualOla1"), width = 6)
             ),
             
@@ -416,7 +416,35 @@ server <- function(input, output) {
       preferences regarding track length and how they have changed over the years."
     })
     
+    output$smlchart2 <- renderText({
+      "On the above chart, you can observe the times of day when we embark on 
+      different types of bike rides. It is noticeable that longer cycling 
+      adventures are usually chosen during the morning hours, while shorter 
+      rides tend to take place in the afternoon."
+    })
+    
+    output$smlchart3 <- renderText({
+      "On this chart, you can observe the speed distribution categorized by the 
+      type of ride. Surprisingly, the distributions look quite similar. It is 
+      slightly more challenging to maintain a high average speed on longer routes."
+    })
+    
     # individual
+    
+    output$individual1 <- renderText({
+      "Initially, cycling for me was associated with leisurely afternoon rides 
+      with family or friends. I began to view cycling as a sport when I started 
+      riding with my dad, a passionate cycling enthusiast. In the beginning, it was 
+      just to enjoy our time together, but later on, I began tracking my time 
+      and distance, challenging my own records, aiming to ride faster and farther. 
+      The following page is dedicated to more detailed statistics such as speed, 
+      heart rate, pedaling cadence, and riding frequency. <br>
+      On the right side of the chart, you can observe the correlation between average 
+      speed and pulse. It's evident that for longer distances, the relationship is slightly 
+      higher than for shorter ones, even at comparable average speeds."
+      
+    })
+    
     
     output$individualOla1 <- renderPlot({
       
@@ -459,17 +487,21 @@ server <- function(input, output) {
       plot_ly(
         data = activities_Ola_plot, 
         x = ~Data,
-        text = paste("Date: ", activities_Ola_plot$Data, "<br>Distance: ", activities_Ola_plot$Dystans,
-                     "<br>Time: ", activities_Ola_plot$Czas),
-        hoverinfo = 'text') %>%
-        add_lines(y = ~Średnie.tętno, name = "Average Pulse", line = list(color = "blue")) %>%
-        add_lines(y = ~Maksymalne.tętno, name = "Max Pulse", line = list(color = "red")) %>%
-        add_trace(y = 140, type = 'scatter', mode = 'lines', line = list(color = '#6D657C', width = 1, dash = 'dash'), showlegend = FALSE) %>% 
-        add_trace(y = 160, type = 'scatter', mode = 'lines', line = list(color = '#6D657C', width = 1, dash = 'dash'), showlegend = FALSE) %>%
-        add_trace(y = 150, type = 'scatter', mode = 'lines', line = list(color = "rgba(109, 101, 124, 0.3)", width = 95), name = "Aerobic training area") %>%
+        hoverinfo = 'none') %>%
+        add_lines(y = ~Średnie.tętno, name = "Average Pulse", line = list(color = "blue"), 
+                  text = paste("Date: ", activities_Ola_plot$Data, "<br>Distance: ", activities_Ola_plot$Dystans,
+                               "<br>Time: ", activities_Ola_plot$Czas, "<br>Average pulse: ", activities_Ola_plot$Średnie.tętno), 
+                  hoverinfo = 'text') %>%
+        add_lines(y = ~Maksymalne.tętno, name = "Max Pulse", line = list(color = "red"), 
+                  text = paste("Date: ", activities_Ola_plot$Data, "<br>Distance: ", activities_Ola_plot$Dystans,
+                               "<br>Time: ", activities_Ola_plot$Czas, "<br>Max pulse: ", activities_Ola_plot$Maksymalne.tętno), 
+                  hoverinfo = 'text') %>%
+        add_trace(y = 140, type = 'scatter', mode = 'lines', line = list(color = '#6D657C', width = 1, dash = 'dash'), showlegend = FALSE, hoverinfo = 'none') %>% 
+        add_trace(y = 160, type = 'scatter', mode = 'lines', line = list(color = '#6D657C', width = 1, dash = 'dash'), showlegend = FALSE, hoverinfo = 'none') %>%
+        add_trace(y = 150, type = 'scatter', mode = 'lines', line = list(color = "rgba(109, 101, 124, 0.3)", width = 74), name = "Aerobic training area") %>%
         layout(title = "Average and Max Pulse",
                xaxis = list(title = "Date", tickangle = -60, categoryorder = "array", categoryarray = custom_order),
-               yaxis = list(title = "Pulse"),
+               yaxis = list(title = "Pulse", range = c(125, 185)),
                margin = list(t = 70, b =100))
       
       
@@ -498,13 +530,17 @@ server <- function(input, output) {
       
       plot_ly(
         data = activities_Ola_plot, 
-        x = ~as.factor(Data))%>%
-        add_bars(y = ~Średni.rytm.pedałowania, name = "Average Pedaling Rhythm", type = "bar",
+        x = ~as.factor(Data),
+        hoverinfo = 'none')%>%
+        add_trace(y = ~Średni.rytm.pedałowania, name = "Average Pedaling Rhythm", type = "bar",
                  marker = list(color = ~Łącznie.obrotów, colorscale = my_color_scale,
                                colorbar = list(title = "Total Number of Turns",
                                                len = .6, outlinewidth = 0,
                                                tickfont = list(size = 10)))) %>%
-        add_lines(y = ~Maksymalny.rytm.pedałowania, name = "Max Pedaling Rhythm", line = list(color = "#7C065C")) %>%
+        add_lines(y = ~Maksymalny.rytm.pedałowania, name = "Max Pedaling Rhythm", line = list(color = "#7C065C"),
+                  text = paste("Date: ", activities_Ola_plot$Data, "<br>Distance: ", activities_Ola_plot$Dystans,
+                               "<br>Time: ", activities_Ola_plot$Czas, "<br>Max pedaling rhythm: ", activities_Ola_plot$Maksymalny.rytm.pedałowania),
+                  hoverinfo = "text") %>%
         layout(title = "Average and Max Pedaling Rhythm",
                xaxis = list(title = "Date", tickangle = -50, categoryorder = "array", categoryarray = custom_order),
                yaxis = list(title = "Number of turns per minute"),
