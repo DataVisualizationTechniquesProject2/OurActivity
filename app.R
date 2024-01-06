@@ -25,9 +25,8 @@ ActivitiesTogether$Rok <- as.numeric(ActivitiesTogether$Rok)
 ActivitiesTogether$Day <- wday(ActivitiesTogether$startTime, week_start = 1)
 ActivitiesTogether$Month <- month(ActivitiesTogether$startTime)
 
-zmienna_heat_Maciek = c("Distance (km)", "Time (minutes)","Average Speed (km/h)")
-zmienna_heat_Ola = c("Distance (km)", "Time (minutes)","Average Speed (km/h)")
-zmienna_heat_Kuba = c("Distance (km)", "Time (minutes)","Average Speed (km/h)")
+zmienne = c("Distance (km)", "Time (minutes)","Average Speed (km/h)")
+zmienne_heat = c("Number of records","Distance (km)","Time (minutes)")
 
 Kroki_Calorie <- read.csv("Kroki_Kalorie_Maciek.csv")
 HeartRate_Maciek <- read.csv("HeartRate_Maciek.csv")
@@ -121,7 +120,7 @@ body <- dashboardBody(
               box(           
                 selectInput("zmienna_heat_Kuba",
                             "Choose the variable to analyse",
-                            zmienna_heat_Kuba),
+                            zmienne_heat),
                 width = 2),
               box(title = textOutput("individualKuba4PlotTitle"),
                   plotlyOutput("individualKuba4"),
@@ -194,7 +193,7 @@ body <- dashboardBody(
               box(           
                 selectInput("zmienna_heat_Ola",
                             "Choose the variable to analyse",
-                            zmienna_heat_Ola),
+                            zmienne_heat),
                 width = 2),
               box(title = textOutput("individualOla4PlotTitle"),
                   plotlyOutput("individualOla4"),
@@ -218,7 +217,7 @@ body <- dashboardBody(
               box(
                 selectInput("zmienna",
                             "For which variable do you want to summarize?",
-                            zmienna_heat_Maciek,
+                            zmienne,
                            ),
                 sliderInput("zakres",
                             "Choose the range of years",
@@ -296,7 +295,7 @@ body <- dashboardBody(
               box(           
                 selectInput("zmienna_heat_Maciek",
                             "Choose the variable to analyse",
-                            zmienna_heat_Maciek),
+                            zmienne_heat),
                 width = 2),
               box(title = textOutput("individualMaciek4PlotTitle"),
                   plotlyOutput("individualMaciek4"),
