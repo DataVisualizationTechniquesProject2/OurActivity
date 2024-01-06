@@ -16,6 +16,7 @@ library(htmlwidgets)
 #setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
 activities_Ola <- read.csv("activities_Ola.csv")
 ActivitiesIndividual_Ola <- read.csv("ActivitiesIndividual_Ola.csv")
+
 ActivitiesTogether <- read.csv("ActivitiesTogether_Maciek.csv")
 ActivitiesTogether$startTime <- as.POSIXct(ActivitiesTogether$startTime, format = "%Y-%m-%d %H:%M:%S")
 ActivitiesTogether$Rok <- format(ActivitiesTogether$startTime, "%Y")
@@ -23,7 +24,11 @@ ActivitiesTogether$RokAndMonth <- format(ActivitiesTogether$startTime, "%Y-%m")
 ActivitiesTogether$Rok <- as.numeric(ActivitiesTogether$Rok)
 ActivitiesTogether$Day <- wday(ActivitiesTogether$startTime, week_start = 1)
 ActivitiesTogether$Month <- month(ActivitiesTogether$startTime)
-zmienne = c("Distance (km)", "Time (minutes)","Average Speed (km/h)")
+
+zmienna_heat_Maciek = c("Distance (km)", "Time (minutes)","Average Speed (km/h)")
+zmienna_heat_Ola = c("Distance (km)", "Time (minutes)","Average Speed (km/h)")
+zmienna_heat_Kuba = c("Distance (km)", "Time (minutes)","Average Speed (km/h)")
+
 Kroki_Calorie <- read.csv("Kroki_Kalorie_Maciek.csv")
 HeartRate_Maciek <- read.csv("HeartRate_Maciek.csv")
 HeartRate_Maciek$recordDay <- as.POSIXct(HeartRate_Maciek$recordDay)
@@ -116,7 +121,7 @@ body <- dashboardBody(
               box(           
                 selectInput("zmienna_heat_Kuba",
                             "Choose the variable to analyse",
-                            zmienne_heat),
+                            zmienna_heat_Kuba),
                 width = 2),
               box(title = textOutput("individualKuba4PlotTitle"),
                   plotlyOutput("individualKuba4"),
@@ -189,7 +194,7 @@ body <- dashboardBody(
               box(           
                 selectInput("zmienna_heat_Ola",
                             "Choose the variable to analyse",
-                            zmienne_heat),
+                            zmienna_heat_Ola),
                 width = 2),
               box(title = textOutput("individualOla4PlotTitle"),
                   plotlyOutput("individualOla4"),
@@ -213,7 +218,7 @@ body <- dashboardBody(
               box(
                 selectInput("zmienna",
                             "For which variable do you want to summarize?",
-                            zmienne,
+                            zmienna_heat_Maciek,
                            ),
                 sliderInput("zakres",
                             "Choose the range of years",
@@ -291,7 +296,7 @@ body <- dashboardBody(
               box(           
                 selectInput("zmienna_heat_Maciek",
                             "Choose the variable to analyse",
-                            zmienne_heat),
+                            zmienna_heat_Maciek),
                 width = 2),
               box(title = textOutput("individualMaciek4PlotTitle"),
                   plotlyOutput("individualMaciek4"),
@@ -379,22 +384,6 @@ server <- function(input, output) {
       
     })
     
-    # output$scatterPlot <- renderPlot({
-    #   
-    #   activities_Ola %>%
-    #     filter(Osoba == input$person)-> activities_plot
-    #   
-    #   ggplot(activities_plot, aes(x = as.numeric(DurationMinutes), y = as.numeric(AvgSpeed), color = Type)) +
-    #     geom_point(size = 3) +
-    #     scale_fill_manual(values = c("chartreuse4", "dodgerblue2", "brown2")) +
-    #     labs(title = "Duration vs Speed",
-    #          x = "Duration",
-    #          y = "Average Speed") +
-    #     theme_minimal()+
-    #     theme(plot.title = element_text(hjust = 0.5))
-    #   
-    # })
-    
     output$densityPlot <- renderPlot({
       
       activities_Ola$Type <- factor(activities_Ola$Type, levels = c("Short", "Medium", "Long"))
@@ -454,23 +443,34 @@ server <- function(input, output) {
       ActivitiesIndividual_Ola %>% 
         filter(ActivitiesIndividual_Ola$Year == input$yearChoice)  %>% 
         filter(Średni.rytm.pedałowania != 0 & Średnie.tętno != 0) -> activities_Ola_plot
+      if(input$yearChoice == 2019){
+        activities_Ola_plot %>% 
+          filter(Dystans != 8.70) -> activities_Ola_plot
+      }
       
       activities_Ola_plot$Data <- as.POSIXct(activities_Ola_plot$Data, format = "%Y-%m-%d %H:%M:%S")
       activities_Ola_plot %>% 
-        mutate(Data = format(Data, "%m-%d")) -> activities_Ola_plot
+        arrange(Data)-> activities_Ola_plot
+      
+      activities_Ola_plot$Data <- format(activities_Ola_plot$Data, "%d %b")
+      custom_order <- activities_Ola_plot$Data
+      activities_Ola_plot$Data <- factor(activities_Ola_plot$Data, levels = custom_order)
       
       plot_ly(
         data = activities_Ola_plot, 
-        x = ~as.factor(Data),
+        x = ~Data,
         text = paste("Date: ", activities_Ola_plot$Data, "<br>Distance: ", activities_Ola_plot$Dystans,
                      "<br>Time: ", activities_Ola_plot$Czas),
         hoverinfo = 'text') %>%
         add_lines(y = ~Średnie.tętno, name = "Average Pulse", line = list(color = "blue")) %>%
         add_lines(y = ~Maksymalne.tętno, name = "Max Pulse", line = list(color = "red")) %>%
+        add_trace(y = 140, type = 'scatter', mode = 'lines', line = list(color = '#6D657C', width = 1, dash = 'dash'), showlegend = FALSE) %>% 
+        add_trace(y = 160, type = 'scatter', mode = 'lines', line = list(color = '#6D657C', width = 1, dash = 'dash'), showlegend = FALSE) %>%
+        add_trace(y = 150, type = 'scatter', mode = 'lines', line = list(color = "rgba(109, 101, 124, 0.3)", width = 95), name = "Aerobic training area") %>%
         layout(title = "Average and Max Pulse",
-               xaxis = list(title = "Date", tickangle = -60),
+               xaxis = list(title = "Date", tickangle = -60, categoryorder = "array", categoryarray = custom_order),
                yaxis = list(title = "Pulse"),
-               margin = list(t = 100))
+               margin = list(t = 70, b =100))
       
       
     })
@@ -480,10 +480,18 @@ server <- function(input, output) {
       ActivitiesIndividual_Ola %>% 
         filter(ActivitiesIndividual_Ola$Year == input$yearChoice)  %>% 
         filter(Średni.rytm.pedałowania != 0 & Średnie.tętno != 0) -> activities_Ola_plot
+      if(input$yearChoice == 2019){
+        activities_Ola_plot %>% 
+          filter(Dystans != 8.70) -> activities_Ola_plot
+      }
       
       activities_Ola_plot$Data <- as.POSIXct(activities_Ola_plot$Data, format = "%Y-%m-%d %H:%M:%S")
       activities_Ola_plot %>% 
-        mutate(Data = format(Data, "%m-%d")) -> activities_Ola_plot
+        arrange(Data)-> activities_Ola_plot
+      
+      activities_Ola_plot$Data <- format(activities_Ola_plot$Data, "%d %b")
+      custom_order <- activities_Ola_plot$Data
+      activities_Ola_plot$Data <- factor(activities_Ola_plot$Data, levels = custom_order)
       
       my_color_scale = list(list(0,"#94edff"),
                             list(1, "#7C065C"))
@@ -498,9 +506,9 @@ server <- function(input, output) {
                                                tickfont = list(size = 10)))) %>%
         add_lines(y = ~Maksymalny.rytm.pedałowania, name = "Max Pedaling Rhythm", line = list(color = "#7C065C")) %>%
         layout(title = "Average and Max Pedaling Rhythm",
-               xaxis = list(title = "Date", tickangle = -50),
+               xaxis = list(title = "Date", tickangle = -50, categoryorder = "array", categoryarray = custom_order),
                yaxis = list(title = "Number of turns per minute"),
-               margin = list(t = 70, r = 5),
+               margin = list(t = 70, b = 90),
                showlegend = TRUE) 
       
       
