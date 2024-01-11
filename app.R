@@ -55,6 +55,17 @@ mytheme <- create_theme(
 
 # dodalam obrazek ale niestety go ucinai jest w złym kolorze i na razie nie wiem jak to porawic, najwyzej z niego zrezygnujemy
 # czcionka i kolor to tylko tak na próbe, sprawdzałam jak to mniej więcej działa z tym HTML i CSS
+# footer = HTML("
+#                 <footer class='text-center text-sm-start' style='width:100%;'>
+#                 <hr>
+#                 <p class='text-center' style='font-size:12px;'>
+#                   © 2024 Copyright:
+#                   <a class='text-dark' href='https://www.mi2.ai/'>MI2</a>
+#                 </p>
+#                 </footer>
+#                 ")
+
+#        FOOTERA NIE WIEM W KTORYM MIEJSCU DODAC, JESLI WY WIECIE TO WSTAWCIE. 
 
 header <- dashboardHeader(
   title = tags$div(style = "color: white; font-size: 25px; font-family: 'Arial, sans-serif';", 
@@ -87,7 +98,6 @@ body <- dashboardBody(
   use_theme(mytheme),
   
   tabItems(
-    
     ### Kuba ###
     
        tabItem(tabName = "top5",
@@ -109,7 +119,12 @@ body <- dashboardBody(
                             choices = c("1","2","3","4","5")))
               )),
             fluidRow(
-              box(leafletOutput(outputId = "mapOfTrack",width="100%",height=720),width = 12),
+              box(
+                  shinycssloaders::withSpinner(leafletOutput(outputId = "mapOfTrack",width="100%",height=720),
+                                               type = getOption("spinner.type", default = 5),
+                                               color = getOption("spinner.color", default = "#0275D8"),
+                                               size = getOption("spinner.size", default = 1)
+                  ),width = 12),
               box(title="Track description",
                   textOutput("descriptionOfTrack"),width = 12)
             ),
@@ -119,11 +134,20 @@ body <- dashboardBody(
             fluidRow(
               box(title = "Individual Statistics",
                   textOutput("individualTextKuba1"), width = 6),
-              box(plotlyOutput("individualPlotKuba1"), width = 6),
+              box(
+                  shinycssloaders::withSpinner(plotlyOutput("individualPlotKuba1"),
+                                               type = getOption("spinner.type", default = 5),
+                                               color = getOption("spinner.color", default = "#0275D8"),
+                                               size = getOption("spinner.size", default = 1)
+                  ), width = 6),
               box(textOutput("individualTextKuba2"),width=12)),
             fluidRow(
               box(title = "Elevation Data",
-                  leafletOutput(outputId="individualPlotKuba2",width="100%",height = 720),width = 12,
+                  shinycssloaders::withSpinner(leafletOutput(outputId="individualPlotKuba2",width="100%",height = 720),
+                                               type = getOption("spinner.type", default = 5),
+                                               color = getOption("spinner.color", default = "#0275D8"),
+                                               size = getOption("spinner.size", default = 1)
+                  ),width = 12,
                   textOutput("individualTextKuba3"))),
             fluidRow(
               box(           
@@ -132,10 +156,18 @@ body <- dashboardBody(
                             zmienne_heat),
                 width = 2),
               box(title = textOutput("individualKuba4PlotTitle"),
-                  plotlyOutput("individualKuba4"),
+                  shinycssloaders::withSpinner(plotlyOutput("individualKuba4"),
+                                               type = getOption("spinner.type", default = 5),
+                                               color = getOption("spinner.color", default = "#0275D8"),
+                                               size = getOption("spinner.size", default = 1)
+                  ),
                   width = 5),
               box(title = textOutput("individualKuba5PlotTitle"),
-                  plotlyOutput("individualKuba5"),
+                  shinycssloaders::withSpinner(plotlyOutput("individualKuba5"),
+                                               type = getOption("spinner.type", default = 5),
+                                               color = getOption("spinner.color", default = "#0275D8"),
+                                               size = getOption("spinner.size", default = 1)
+                  ),
                   width = 5)
             )
             ),
@@ -157,7 +189,11 @@ body <- dashboardBody(
             
             fluidRow(
               box(title = "What type of routes do we most frequently choose?",
-                  plotOutput("hisPlot"), width = 6),
+                  shinycssloaders::withSpinner(plotOutput("hisPlot"),
+                                               type = getOption("spinner.type", default = 5),
+                                               color = getOption("spinner.color", default = "#0275D8"),
+                                               size = getOption("spinner.size", default = 1)
+                  ), width = 6),
               
               box(sliderInput("zakres1",
                                  "Choose the range of years",
@@ -172,11 +208,19 @@ body <- dashboardBody(
             
             fluidRow(
               box(title = "When do we go cycling?",
-                  plotOutput("densityPlot"),
+                  shinycssloaders::withSpinner(plotOutput("densityPlot"),
+                                               type = getOption("spinner.type", default = 5),
+                                               color = getOption("spinner.color", default = "#0275D8"),
+                                               size = getOption("spinner.size", default = 1)
+                  ),
                   textOutput("smlchart2"), width = 6),
               
               box(title = "Does the length of the route affect our average speed?",
-                  plotOutput("violinPlot"),
+                  shinycssloaders::withSpinner(plotOutput("violinPlot"),
+                                               type = getOption("spinner.type", default = 5),
+                                               color = getOption("spinner.color", default = "#0275D8"),
+                                               size = getOption("spinner.size", default = 1)
+                  ),
                   textOutput("smlchart3"), width = 6)
               )
     ),
@@ -186,7 +230,11 @@ body <- dashboardBody(
             fluidRow(
               box(title = "Individual Statistics",
                   textOutput("individual1"), width = 6),
-              box(plotOutput("individualOla1"), width = 6)
+              box(shinycssloaders::withSpinner(plotlyOutput("individualOla1"),
+                                               type = getOption("spinner.type", default = 5),
+                                               color = getOption("spinner.color", default = "#0275D8"),
+                                               size = getOption("spinner.size", default = 1)
+              ), width = 6)
             ),
             
             fluidRow(
@@ -194,8 +242,16 @@ body <- dashboardBody(
                   selectInput("yearChoice",
                               "Activity from which year do your want to see?",
                               unique(ActivitiesIndividual_Ola$Year)),
-                plotlyOutput("individualOla2"),
-                plotlyOutput("individualOla3"),
+                  shinycssloaders::withSpinner(plotlyOutput("individualOla2"),
+                                               type = getOption("spinner.type", default = 5),
+                                               color = getOption("spinner.color", default = "#0275D8"),
+                                               size = getOption("spinner.size", default = 1)
+                  ),
+                  shinycssloaders::withSpinner(plotlyOutput("individualOla3"),
+                                               type = getOption("spinner.type", default = 5),
+                                               color = getOption("spinner.color", default = "#0275D8"),
+                                               size = getOption("spinner.size", default = 1)
+                  ),
                 width = 12)
             ),
             fluidRow(
@@ -205,10 +261,18 @@ body <- dashboardBody(
                             zmienne_heat),
                 width = 2),
               box(title = textOutput("individualOla4PlotTitle"),
-                  plotlyOutput("individualOla4"),
+                  shinycssloaders::withSpinner(plotlyOutput("individualOla4"),
+                                               type = getOption("spinner.type", default = 5),
+                                               color = getOption("spinner.color", default = "#0275D8"),
+                                               size = getOption("spinner.size", default = 1)
+                  ),
                   width = 5),
               box(title = textOutput("individualOla5PlotTitle"),
-                  plotlyOutput("individualOla5"),
+                  shinycssloaders::withSpinner(plotlyOutput("individualOla5"),
+                                               type = getOption("spinner.type", default = 5),
+                                               color = getOption("spinner.color", default = "#0275D8"),
+                                               size = getOption("spinner.size", default = 1)
+                  ),
                   width = 5)
             )
             
@@ -241,7 +305,11 @@ body <- dashboardBody(
             fluidRow(
               box(
                 title = textOutput("competition1PlotTitle"),
-                plotlyOutput("competition1"),
+                shinycssloaders::withSpinner(plotlyOutput("competition1"),
+                                             type = getOption("spinner.type", default = 5),
+                                             color = getOption("spinner.color", default = "#0275D8"),
+                                             size = getOption("spinner.size", default = 1)
+                ),
                 width = 6
               ),
               box(
@@ -255,7 +323,11 @@ body <- dashboardBody(
                width=6 
               ),
               box(
-                plotlyOutput("competition2")
+                shinycssloaders::withSpinner(plotlyOutput("competition2"),
+                                             type = getOption("spinner.type", default = 5),
+                                             color = getOption("spinner.color", default = "#0275D8"),
+                                             size = getOption("spinner.size", default = 1)
+                )
               )
             )
     ),
@@ -274,14 +346,22 @@ body <- dashboardBody(
               box(
                 title = "Corelation between steps and calories",
                 numericInput("limitKcal", "Type in calories limit", value=max(Kroki_Calorie$Kalorie)),
-                plotlyOutput("individualMaciek1"),
+                shinycssloaders::withSpinner(plotlyOutput("individualMaciek1"),
+                                             type = getOption("spinner.type", default = 5),
+                                             color = getOption("spinner.color", default = "#0275D8"),
+                                             size = getOption("spinner.size", default = 1)
+                ),
                 width = 9
               )
             ),
             fluidRow(
               box(
                 title = "In which month do I walk the most?",
-                plotlyOutput("individualMaciek2"),
+                shinycssloaders::withSpinner(plotlyOutput("individualMaciek2"),
+                                             type = getOption("spinner.type", default = 5),
+                                             color = getOption("spinner.color", default = "#0275D8"),
+                                             size = getOption("spinner.size", default = 1)
+                ),
                 width = 6
               ),
               box(
@@ -296,7 +376,11 @@ body <- dashboardBody(
             ),
             fluidRow(
               box(title = "Average heart rate during exercising per month",
-                  plotlyOutput("individualMaciek3"),
+                  shinycssloaders::withSpinner(plotlyOutput("individualMaciek3"),
+                                               type = getOption("spinner.type", default = 5),
+                                               color = getOption("spinner.color", default = "#0275D8"),
+                                               size = getOption("spinner.size", default = 1)
+                  ),
                   width = 12
                   )
             ),
@@ -307,10 +391,18 @@ body <- dashboardBody(
                             zmienne_heat),
                 width = 2),
               box(title = textOutput("individualMaciek4PlotTitle"),
-                  plotlyOutput("individualMaciek4"),
+                  shinycssloaders::withSpinner(plotlyOutput("individualMaciek4"),
+                                               type = getOption("spinner.type", default = 5),
+                                               color = getOption("spinner.color", default = "#0275D8"),
+                                               size = getOption("spinner.size", default = 1)
+                  ),
                   width = 5),
               box(title = textOutput("individualMaciek5PlotTitle"),
-                  plotlyOutput("individualMaciek5"),
+                  shinycssloaders::withSpinner(plotlyOutput("individualMaciek5"),
+                                               type = getOption("spinner.type", default = 5),
+                                               color = getOption("spinner.color", default = "#0275D8"),
+                                               size = getOption("spinner.size", default = 1)
+                  ),
                   width = 5)
             )
     )
@@ -571,20 +663,18 @@ server <- function(input, output) {
         output$individualOla4PlotTitle <- renderText({"Time (minutes) in each month"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Ola") %>% group_by(Osoba,Month) %>% summarise(score = sum(Czas))
       }
-      plot_ly(df,
-              x=~Osoba,
-              y=~Month,
-              z=~score,
-              type="heatmap",
-              colors = custom_colors,
-              colorbar = list(tickformat = ".d"),
-              text = ~paste("Person: ", Osoba, "<br>Month: ", Month, paste("<br>",input$zmienna_heat, ":"), score),
-              hoverinfo = "text"
-      ) %>%
-        layout(
-          xaxis = list(title = ""),
-          yaxis = list(title="Month",tickmode = "array", tickvals = unique(df$Month),
-                       ticktext = unique(df$Month))
+      plot_ly(df, 
+              x=~Month, 
+              y=~score, 
+              type="bar",
+              hoverinfo = "text",
+              text = paste("Person: ", df$Osoba, "<br>Month: ", df$Month, paste("<br>",input$zmienna_heat_Ola, ":"), df$score),
+              textposition = "none"
+      ) %>% 
+        layout( 
+          xaxis = list(title = "Month", tickformat=".d",tickvals = unique(df$Month), 
+                       ticktext = unique(df$Month)),
+          yaxis = list(title=input$zmienna_heat_Ola)
         )
     })
 
@@ -602,20 +692,18 @@ server <- function(input, output) {
         output$individualOla5PlotTitle <- renderText({"Time (minutes) in each day"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Ola") %>% group_by(Osoba,Day) %>% summarise(score = sum(Czas))
       }
-      plot_ly(df,
-              x=~Osoba,
-              y=~Day,
-              z=~score,
-              type="heatmap",
-              colors = custom_colors,
-              colorbar = list(tickformat = ".d"),
-              text = ~paste("Person: ", Osoba, "<br>Day: ", Day, paste("<br>",input$zmienna_heat, ":"), score),
-              hoverinfo = "text"
-      ) %>%
-        layout(
-          xaxis = list(title = ""),
-          yaxis = list(title="Day",tickmode = "array", tickvals = unique(df$Day),
-                       ticktext = unique(df$Day))
+      plot_ly(df, 
+              x=~Day, 
+              y=~score, 
+              type="bar",
+              hoverinfo = "text",
+              text = paste("Person: ", df$Osoba, "<br>Day: ", df$Day, paste("<br>",input$zmienna_heat_Ola, ":"), df$score),
+              textposition = "none"
+      ) %>% 
+        layout( 
+          xaxis = list(title = "Day", tickformat=".d",tickvals = unique(df$Day), 
+                       ticktext = unique(df$Day)),
+          yaxis = list(title=input$zmienna_heat_Ola)
         )
     })
       
@@ -805,20 +893,18 @@ server <- function(input, output) {
         output$individualKuba4PlotTitle <- renderText({"Time (minutes) in each month"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Kuba") %>% group_by(Osoba,Month) %>% summarise(score = sum(Czas))
       }
-      plot_ly(df,
-              x=~Osoba,
-              y=~Month,
-              z=~score,
-              type="heatmap",
-              colors = custom_colors,
-              colorbar = list(tickformat = ".d"),
-              text = ~paste("Person: ", Osoba, "<br>Month: ", Month, paste("<br>",input$zmienna_heat, ":"), score),
-              hoverinfo = "text"
-      ) %>%
-        layout(
-          xaxis = list(title = ""),
-          yaxis = list(title="Month",tickmode = "array", tickvals = unique(df$Month),
-                       ticktext = unique(df$Month))
+      plot_ly(df, 
+              x=~Month, 
+              y=~score, 
+              type="bar",
+              hoverinfo = "text",
+              text = paste("Person: ", df$Osoba, "<br>Month: ", df$Month, paste("<br>",input$zmienna_heat_Kuba, ":"), df$score),
+              textposition = "none"
+      ) %>% 
+        layout( 
+          xaxis = list(title = "Month", tickformat=".d",tickvals = unique(df$Month), 
+                       ticktext = unique(df$Month)),
+          yaxis = list(title=input$zmienna_heat_Kuba)
         )
     })
     
@@ -836,20 +922,18 @@ server <- function(input, output) {
         output$individualKuba5PlotTitle <- renderText({"Time (minutes) in each day"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Kuba") %>% group_by(Osoba,Day) %>% summarise(score = sum(Czas))
       }
-      plot_ly(df,
-              x=~Osoba,
-              y=~Day,
-              z=~score,
-              type="heatmap",
-              colors = custom_colors,
-              colorbar = list(tickformat = ".d"),
-              text = ~paste("Person: ", Osoba, "<br>Day: ", Day, paste("<br>",input$zmienna_heat, ":"), score),
-              hoverinfo = "text"
-      ) %>%
-        layout(
-          xaxis = list(title = ""),
-          yaxis = list(title="Day",tickmode = "array", tickvals = unique(df$Day),
-                       ticktext = unique(df$Day))
+      plot_ly(df, 
+              x=~Day, 
+              y=~score, 
+              type="bar",
+              hoverinfo = "text",
+              text = paste("Person: ", df$Osoba, "<br>Day: ", df$Day, paste("<br>",input$zmienna_heat_Kuba, ":"), df$score),
+              textposition = "none"
+      ) %>% 
+        layout( 
+          xaxis = list(title = "Day", tickformat=".d",tickvals = unique(df$Day), 
+                       ticktext = unique(df$Day)),
+          yaxis = list(title=input$zmienna_heat_Kuba)
         )
     })
       
@@ -1013,21 +1097,20 @@ server <- function(input, output) {
           df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Maciek") %>% group_by(Osoba,Month) %>% summarise(score = sum(Czas))
         }
         plot_ly(df, 
-                x=~Osoba, 
-                y=~Month, 
-                z=~score, 
-                type="heatmap",
-                colors = custom_colors,
-                colorbar = list(tickformat = ".d"),
-                text = ~paste("Person: ", Osoba, "<br>Month: ", Month, paste("<br>",input$zmienna_heat, ":"), score),
-                hoverinfo = "text"
+                x=~Month, 
+                y=~score, 
+                type="bar",
+                hoverinfo = "text",
+                text = paste("Person: ", df$Osoba, "<br>Month: ", df$Month, paste("<br>",input$zmienna_heat_Maciek, ":"), df$score),
+                textposition = "none"
         ) %>% 
           layout( 
-            xaxis = list(title = ""),
-            yaxis = list(title="Month",tickmode = "array", tickvals = unique(df$Month), 
-                         ticktext = unique(df$Month))
+            xaxis = list(title = "Month", tickformat=".d",tickvals = unique(df$Month), 
+                         ticktext = unique(df$Month)),
+            yaxis = list(title=input$zmienna_heat_Maciek)
           )
       })
+
       
       output$individualMaciek5 <- renderPlotly({
         custom_colors <- c("black", "yellow")
@@ -1044,19 +1127,17 @@ server <- function(input, output) {
           df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Maciek") %>% group_by(Osoba,Day) %>% summarise(score = sum(Czas))
         }
         plot_ly(df, 
-                x=~Osoba, 
-                y=~Day, 
-                z=~score, 
-                type="heatmap",
-                colors = custom_colors,
-                colorbar = list(tickformat = ".d"),
-                text = ~paste("Person: ", Osoba, "<br>Day: ", Day, paste("<br>",input$zmienna_heat, ":"), score),
-                hoverinfo = "text"
+                x=~Day, 
+                y=~score, 
+                type="bar",
+                hoverinfo = "text",
+                text = paste("Person: ", df$Osoba, "<br>Day: ", df$Day, paste("<br>",input$zmienna_heat_Maciek, ":"), df$score),
+                textposition = "none"
         ) %>% 
           layout( 
-            xaxis = list(title = ""),
-            yaxis = list(title="Day",tickmode = "array", tickvals = unique(df$Day), 
-                         ticktext = unique(df$Day))
+            xaxis = list(title = "Day", tickformat=".d",tickvals = unique(df$Day), 
+                         ticktext = unique(df$Day)),
+            yaxis = list(title=input$zmienna_heat_Maciek)
           )
       })
       
