@@ -109,13 +109,22 @@ body <- dashboardBody(
                             choices = c("1","2","3","4","5")))
               )),
             fluidRow(
-              box(leafletOutput("mapOfTrack")),
+              box(leafletOutput(outputId = "mapOfTrack",width="100%",height=720),width = 12),
               box(title="Track description",
-                  textOutput("descriptionOfTrack"),width = 6)
+                  textOutput("descriptionOfTrack"),width = 12)
             ),
             
     ),
     tabItem(tabName = "individualKuba",
+            fluidRow(
+              box(title = "Individual Statistics",
+                  textOutput("individualTextKuba1"), width = 6),
+              box(plotlyOutput("individualPlotKuba1"), width = 6),
+              box(textOutput("individualTextKuba2"),width=12)),
+            fluidRow(
+              box(title = "Elevation Data",
+                  leafletOutput(outputId="individualPlotKuba2",width="100%",height = 720),width = 12,
+                  textOutput("individualTextKuba3"))),
             fluidRow(
               box(           
                 selectInput("zmienna_heat_Kuba",
@@ -690,13 +699,17 @@ server <- function(input, output) {
       text_Maciek_1<-"On 3rd of June 2022 just after mature exams with my friends we decided to take a trip around the suburbs of Zamość to celebrate
       the end of the school year and spend some time on fresh air after months of studying. It took us about 7,5 hours and I buried almost 1700 kcal. 
       It was great experience because we were aware that we had 4 months of vacation ahead of us"
+      
       text_Maciek_2<-"This is just one of my favourite routes in Zamość. Take a look :)."
+      
       text_Maciek_3<-"On 28th of August 2023 I decided to do a challenge to beat my previous record in riding to my girlfriend as fast as possible.
       And so I did it. 9 kilometers with average speed 22 km/h. It was really challenging and in the end I was sweating so much that I had to take a
       shower and change clothes which were soaked. But it was fantastic day and I won't forget it."
+      
       text_Maciek_4<-"On 29th of May 2020 I rode with a group of friends to the lagoon nearby Zamość. A really bumpy road with lots of challenging hills.
       As it was just after lockdown caused by COVID we were so happy to finally leave our houses and meet up for this adventure. The road shown on the chart
       is only one way. While we were returning it was significantly easier, because we were going downhill and all in all we made about 70 km this day."
+      
       text_Maciek_5<-"And finally Warsaw. My first longer trip took place on 29th of July 2023. I transported my bike from my home town and started
       sightseeing the surroundings. A large part of the ride was in Wilanów, because I really enjoyed this district and couldn't leave it. All the time there was
       something interesting there that I wanted to check."
@@ -724,6 +737,60 @@ server <- function(input, output) {
       
       eval(parse(text=paste("text",input$track,input$number_of_track,sep="_")))
     })
+    output$individualTextKuba1 <- renderText({
+      "Cycling for me was always a good form of spending my free time. 
+      Back when I was younger I used to ride with my dad. 
+      The routes weren’t as long as they became later, but I always treated cycling as a great form of relaxation.
+      I changed my perspective in high school, when I met my friend Michał. 
+      Our relation wasn’t connected in no way with riding a bike. Everything changed on 2020 summer. 
+      We came with an idea of meeting each other and decided to try to ride to Góra Kalwaria. 
+      This was a beginning of a beautiful story, the fruits of which you can see here."
+      
+    })
+    output$individualTextKuba2 <- renderText({
+      "The first plot shows the relations between distance and actual spent time on riding a bike.   
+      The y-axis value corresponds to fraction of the ride, in which speed was greater than zero. 
+      So for example when my ride had a value of 79, this means that the 79% of the time I recorded activity were actually ridden. 
+      The 21% of the time I spent on waiting for light change or I was just chilling and regenerating."
+      
+    })
+    output$individualTextKuba3 <- renderText({
+      "\n
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec maximus arcu dictum, 
+      lobortis velit quis, euismod libero. Phasellus pretium, dolor nec cursus volutpat, 
+      ipsum velit maximus eros, sit amet ornare ante tortor id nisl. 
+      Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. 
+      Phasellus urna mi, lacinia quis rutrum at, placerat in dolor. Nulla eu ornare sapien. 
+      Ut turpis ante, semper non massa at, maximus rutrum tellus. Ut sed iaculis metus, 
+      pretium sollicitudin magna. Suspendisse consequat rhoncus leo vel dignissim. Nulla facilisi.
+      In ornare nulla in libero dignissim, ut tempus mi aliquam. Proin eu nisi ligula. 
+      Vivamus egestas justo sem, vitae volutpat ligula hendrerit sed. Nulla sit amet ante felis. 
+      Vivamus sagittis tristique diam quis elementum.."
+      
+    })
+    output$individualPlotKuba1<-renderPlotly({
+      read.csv("activities_JP.csv")->dane_JP
+      
+      dane_JP %>% filter(Activity.Type=="Ride") %>% 
+        mutate(percent_of_ridden_time=Moving.Time/Elapsed.Time,
+               length_of_track=ifelse( Distance<40,"Short",ifelse(Distance<70,"Medium","Long"))) -> sml_elapsed_moving_time
+      
+      plot_ly(data=sml_elapsed_moving_time,
+              x=~Distance,
+              y=~(100*percent_of_ridden_time),
+              color=~length_of_track,colors=c("brown2", "dodgerblue2","chartreuse4" ))%>%
+        layout(title="Relation between distance and actual time spend on the ride",
+                 yaxis=list(title="Percent of time spent on the ride"))
+    })
+    output$individualPlotKuba2<-renderLeaflet({
+      max_elevations<-read.csv("max_elevations_JP.csv")
+      leaflet() %>% addTiles() %>% addCircleMarkers(data = max_elevations,lng=~lon,lat=~lat,radius=~(ele/10),color= ifelse(max_elevations$min_max=="min","yellow","red"),fillColor = ifelse(max_elevations$min_max=="min","yellow","red"),fillOpacity = 0.8,popup = paste0(
+        "<strong>Date: </strong>", max_elevations$activity_date, "<br>",
+        "<strong>Distance (km): </strong>", max_elevations$distance, "<br>",
+        "<strong>Time : </strong>", seconds_to_period(max_elevations$time), "<br>",
+        "<strong>Mean speed (km/h): </strong>", round(max_elevations$mean_speed*3.6,2), "<br>", 
+        "<strong>Minimum/Maximum elevation: </strong>", paste(max_elevations$min_max,": ",max_elevations$ele," m",sep=""), "<br>"))
+      })
     output$individualKuba4 <- renderPlotly({
       custom_colors <- c("black", "yellow")
       if(input$zmienna_heat_Kuba == "Number of records"){
