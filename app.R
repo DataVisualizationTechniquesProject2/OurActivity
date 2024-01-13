@@ -12,6 +12,7 @@ library(scales)
 library(leaflet)
 library(geosphere)
 library(htmlwidgets)
+library(dashboardthemes)
 
 #setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
 activities_Ola <- read.csv("activities_Ola.csv")
@@ -32,29 +33,11 @@ Kroki_Calorie <- read.csv("Kroki_Kalorie_Maciek.csv")
 HeartRate_Maciek <- read.csv("HeartRate_Maciek.csv")
 HeartRate_Maciek$recordDay <- as.POSIXct(HeartRate_Maciek$recordDay)
 
-# Create the theme
-mytheme <- create_theme(
-  adminlte_color(
-    light_blue = "#434C5E"
-  ),
-  adminlte_sidebar(
-    width = "200px",
-    dark_bg = "#D8DEE9",
-    dark_hover_bg = "#81A1C1",
-    dark_color = "#2E3440"
-  ),
-  adminlte_global(
-    content_bg = "#FFF",
-    box_bg = "#D8DEE9", 
-    info_box_bg = "#D8DEE9"
-  )
-)
+
 
 
 # HEADER
 
-# dodalam obrazek ale niestety go ucinai jest w złym kolorze i na razie nie wiem jak to porawic, najwyzej z niego zrezygnujemy
-# czcionka i kolor to tylko tak na próbe, sprawdzałam jak to mniej więcej działa z tym HTML i CSS
 # footer = HTML("
 #                 <footer class='text-center text-sm-start' style='width:100%;'>
 #                 <hr>
@@ -68,15 +51,143 @@ mytheme <- create_theme(
 #        FOOTERA NIE WIEM W KTORYM MIEJSCU DODAC, JESLI WY WIECIE TO WSTAWCIE. 
 
 header <- dashboardHeader(
-  title = tags$div(style = "color: white; font-size: 25px; font-family: 'Arial, sans-serif';", 
-                   HTML('<img src="https://pixy.org/src/38/384909.png" style="height:30px; margin-right:10px;">'),
+  titleWidth = 300,
+  title = tags$div(style = "color: white; font-size: 26px; font-family: 'Arial, sans-serif';", 
+                   HTML('<img src="https://creazilla-store.fra1.digitaloceanspaces.com/icons/3432125/bike-icon-md.png" style="height:30px; margin-right:10px;">'),
                    "Our Bike Activity"))
+
+
+customTheme <- shinyDashboardThemeDIY(
+  
+  ### general
+  appFontFamily = "Arial"
+  ,appFontColor = "#000000"
+    ,primaryFontColor = "#ffffff"
+    ,bodyBackColor = "#f2f2f2"
+    
+  ### header
+  ,logoBackColor = "#69708d"
+    
+  
+  ,headerButtonBackColor = "#4e5365"
+    ,headerButtonIconColor = "#ffffff"
+    ,headerButtonBackColorHover = "#69708d"
+    ,headerButtonIconColorHover = "#000000"
+    
+  ,headerBackColor = "#4e5365"
+    ,headerBoxShadowColor = "#69708d"
+    ,headerBoxShadowSize = "12px 2px 2px"
+  
+  ### sidebar
+  ,sidebarBackColor = cssGradientThreeColors(
+    direction = "down"
+    ,colorStart = "#69708d"
+    ,colorMiddle = "#4e5365"
+    ,colorEnd = "#33363d"
+    ,colorStartPos = 0
+    ,colorMiddlePos = 50
+    ,colorEndPos = 100
+  )
+  
+  ,sidebarPadding = 0
+  
+  ,sidebarMenuBackColor = "transparent"
+  ,sidebarMenuPadding = 0
+  ,sidebarMenuBorderRadius = 0
+  
+  ,sidebarShadowRadius = "3px 5px 5px"
+  ,sidebarShadowColor = "#aaaaaa"
+    
+  ,sidebarUserTextColor = "rgb(255,255,255)"
+  
+  ,sidebarSearchBackColor = "rgb(55,72,80)"
+  ,sidebarSearchIconColor = "rgb(153,153,153)"
+  ,sidebarSearchBorderColor = "rgb(55,72,80)"
+  
+  ,sidebarTabTextColor = "#ffffff"
+  ,sidebarTabTextSize = 15
+  ,sidebarTabBorderStyle = "none none solid none"
+  ,sidebarTabBorderColor = "#4e5365"
+  ,sidebarTabBorderWidth = 1
+  
+  ,sidebarTabBackColorSelected = cssGradientThreeColors(
+    direction = "right"
+    ,colorStart = "#a5abc3"
+    ,colorMiddle = "#858ca8"
+    ,colorEnd = "#4e5365"
+    ,colorStartPos = 0
+    ,colorMiddlePos = 50
+    ,colorEndPos = 100
+  )
+  ,sidebarTabTextColorSelected = "#ffffff"
+  ,sidebarTabRadiusSelected = "0px 20px 20px 0px"
+  
+  ,sidebarTabBackColorHover = cssGradientThreeColors(
+    direction = "right"
+    ,colorStart = "#a5abc3"
+    ,colorMiddle = "#858ca8"
+    ,colorEnd = "#4e5365"
+    ,colorStartPos = 0
+    ,colorMiddlePos = 50
+    ,colorEndPos = 100
+  )
+  ,sidebarTabTextColorHover = "#ffffff"
+  ,sidebarTabBorderStyleHover = "none none solid none"
+  ,sidebarTabBorderColorHover = "#4e5365"
+  ,sidebarTabBorderWidthHover = 1
+  ,sidebarTabRadiusHover = "0px 20px 20px 0px"
+  
+  ### boxes
+  ,boxBackColor = "#d8dce8"
+  ,boxBorderRadius = 5
+  ,boxShadowSize = "0px 2px 2px"
+  ,boxShadowColor = "rgba(0,0,0,.1)"
+  ,boxTitleSize = 20
+  ,boxDefaultColor = "#4e5365"
+  ,boxPrimaryColor = "#4e5365"
+  ,boxInfoColor = "rgb(210,214,220)"
+  ,boxSuccessColor = "rgba(0,255,213,1)"
+  ,boxWarningColor = "rgb(244,156,104)"
+  ,boxDangerColor = "rgb(255,88,55)"
+  
+  ,tabBoxTabColor = "rgb(255,255,255)"
+  ,tabBoxTabTextSize = 14
+  ,tabBoxTabTextColor = "rgb(0,0,0)"
+  ,tabBoxTabTextColorSelected = "rgb(0,0,0)"
+  ,tabBoxBackColor = "rgb(255,255,255)"
+  ,tabBoxHighlightColor = "rgba(44,222,235,1)"
+  ,tabBoxBorderRadius = 5
+  
+  ### inputs
+  ,buttonBackColor = "rgb(245,245,245)"
+  ,buttonTextColor = "rgb(0,0,0)"
+  ,buttonBorderColor = "rgb(200,200,200)"
+  ,buttonBorderRadius = 5
+  
+  ,buttonBackColorHover = "rgb(235,235,235)"
+  ,buttonTextColorHover = "rgb(100,100,100)"
+  ,buttonBorderColorHover = "rgb(200,200,200)"
+  
+  ,textboxBackColor = "rgb(255,255,255)"
+  ,textboxBorderColor = "rgb(200,200,200)"
+  ,textboxBorderRadius = 5
+  ,textboxBackColorSelect = "rgb(245,245,245)"
+  ,textboxBorderColorSelect = "rgb(200,200,200)"
+  
+  ### tables
+  ,tableBackColor = "rgb(255,255,255)"
+  ,tableBorderColor = "rgb(240,240,240)"
+  ,tableBorderTopSize = 1
+  ,tableBorderRowSize = 1
+  
+)
+
 
 # SIDEBAR
 
 sidebar <- dashboardSidebar(
   
-  width = 700,
+  width = 300,
   
   sidebarMenu(
   menuItem("TOP 5", tabName = "top5", icon = icon("map")),
@@ -95,7 +206,8 @@ sidebar <- dashboardSidebar(
 
 body <- dashboardBody(
   
-  use_theme(mytheme),
+  customTheme,
+
   
   tabItems(
     ### Kuba ###
@@ -103,9 +215,10 @@ body <- dashboardBody(
        tabItem(tabName = "top5",
            
             fluidRow(
-              box(title = "Top 5 tracks",
-                  textOutput("top5description")),
-              box(sidebarMenu(id = "sidebarmenuTop5",
+              box(title = "Top 5 tracks", status = "primary", solidHeader = T,
+                  uiOutput("top5description")),
+              box(status = "primary", 
+                  sidebarMenu(id = "sidebarmenuTop5",
                               selectInput(
                                 inputId = "track",
                                 label = "Choose person:",
@@ -119,50 +232,51 @@ body <- dashboardBody(
                             choices = c("1","2","3","4","5")))
               )),
             fluidRow(
-              box(
+              box(status = "primary",
                   shinycssloaders::withSpinner(leafletOutput(outputId = "mapOfTrack",width="100%",height=720),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#0275D8"),
                                                size = getOption("spinner.size", default = 1)
                   ),width = 12),
-              box(title="Track description",
-                  textOutput("descriptionOfTrack"),width = 12)
+              box(title="Track description", status = "primary", solidHeader = T,
+                  uiOutput("descriptionOfTrack"),
+                  width = 12)
             ),
             
     ),
     tabItem(tabName = "individualKuba",
             fluidRow(
-              box(title = "Individual Statistics",
-                  textOutput("individualTextKuba1"), width = 6),
-              box(
-                  shinycssloaders::withSpinner(plotlyOutput("individualPlotKuba1"),
+              box(title = "Individual Statistics", status = "primary", solidHeader = T,
+                  uiOutput("individualTextKuba1"), width = 6),
+              box(status = "primary", shinycssloaders::withSpinner(plotlyOutput("individualPlotKuba1"),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#0275D8"),
                                                size = getOption("spinner.size", default = 1)
                   ), width = 6),
-              box(textOutput("individualTextKuba2"),width=12)),
+              box(status = "primary", uiOutput("individualTextKuba2"), 
+                  width=12)),
             fluidRow(
-              box(title = "Elevation Data",
+              box(title = "Elevation Data", status = "primary", solidHeader = T,
                   shinycssloaders::withSpinner(leafletOutput(outputId="individualPlotKuba2",width="100%",height = 720),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#0275D8"),
                                                size = getOption("spinner.size", default = 1)
                   ),width = 12,
-                  textOutput("individualTextKuba3"))),
+                  uiOutput("individualTextKuba3"))),
             fluidRow(
-              box(           
+              box(status = "primary",           
                 selectInput("zmienna_heat_Kuba",
                             "Choose the variable to analyse",
                             zmienne_heat),
                 width = 2),
-              box(title = textOutput("individualKuba4PlotTitle"),
+              box(title = uiOutput("individualKuba4PlotTitle"), status = "primary", solidHeader = T,
                   shinycssloaders::withSpinner(plotlyOutput("individualKuba4"),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#0275D8"),
                                                size = getOption("spinner.size", default = 1)
                   ),
                   width = 5),
-              box(title = textOutput("individualKuba5PlotTitle"),
+              box(title = uiOutput("individualKuba5PlotTitle"), status = "primary", solidHeader = T,
                   shinycssloaders::withSpinner(plotlyOutput("individualKuba5"),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#0275D8"),
@@ -178,8 +292,8 @@ body <- dashboardBody(
     tabItem(tabName = "sml",
             
             fluidRow(
-              box(title = "Small/Medium/Long Tracks",
-                  textOutput("smldescription")),
+              box(title = "Small/Medium/Long Tracks", status = "primary", solidHeader = T,
+                  uiOutput("smldescription")),
               sidebarMenu(id = "sidebarmenu",
                           selectInput(
                             inputId = "person",
@@ -188,40 +302,43 @@ body <- dashboardBody(
             )),
             
             fluidRow(
-              box(title = "What type of routes do we most frequently choose?",
+              box(title = "What type of routes do we most frequently choose?", 
+                  status = "primary", solidHeader = T,
                   shinycssloaders::withSpinner(plotOutput("hisPlot"),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#0275D8"),
                                                size = getOption("spinner.size", default = 1)
                   ), width = 6),
               
-              box(sliderInput("zakres1",
+              box(status = "primary", 
+                  sliderInput("zakres1",
                                  "Choose the range of years",
                                  value = c(2020, 2023),
                                  min = 2020,
                                  max = 2023,
                                  step = 1),
-                  textOutput("smlchart1"),
+                  uiOutput("smlchart1"),
                   width = 6
                      )
             ),
             
             fluidRow(
-              box(title = "When do we go cycling?",
+              box(title = "When do we go cycling?", status = "primary", solidHeader = T,
                   shinycssloaders::withSpinner(plotOutput("densityPlot"),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#0275D8"),
                                                size = getOption("spinner.size", default = 1)
                   ),
-                  textOutput("smlchart2"), width = 6),
+                  uiOutput("smlchart2"), width = 6),
               
               box(title = "Does the length of the route affect our average speed?",
+                  status = "primary", solidHeader = T,
                   shinycssloaders::withSpinner(plotOutput("violinPlot"),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#0275D8"),
                                                size = getOption("spinner.size", default = 1)
                   ),
-                  textOutput("smlchart3"), width = 6)
+                  uiOutput("smlchart3"), width = 6)
               )
     ),
     
@@ -229,8 +346,10 @@ body <- dashboardBody(
             
             fluidRow(
               box(title = "Individual Statistics",
-                  textOutput("individual1"), width = 6),
-              box(shinycssloaders::withSpinner(plotlyOutput("individualOla1"),
+                  status = "primary", solidHeader = T,
+                  uiOutput("individual1"), width = 6),
+              box(status = "primary",
+                  shinycssloaders::withSpinner(plotOutput("individualOla1"),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#0275D8"),
                                                size = getOption("spinner.size", default = 1)
@@ -239,6 +358,7 @@ body <- dashboardBody(
             
             fluidRow(
               box(title =  "Analyzing the Diversity of Bike Adventures",
+                  status = "primary", solidHeader = T,
                   selectInput("yearChoice",
                               "Activity from which year do your want to see?",
                               unique(ActivitiesIndividual_Ola$Year)),
@@ -255,19 +375,19 @@ body <- dashboardBody(
                 width = 12)
             ),
             fluidRow(
-              box(           
+              box(status = "primary",           
                 selectInput("zmienna_heat_Ola",
                             "Choose the variable to analyse",
                             zmienne_heat),
                 width = 2),
-              box(title = textOutput("individualOla4PlotTitle"),
+              box(title = uiOutput("individualOla4PlotTitle"), status = "primary", solidHeader = T,
                   shinycssloaders::withSpinner(plotlyOutput("individualOla4"),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#0275D8"),
                                                size = getOption("spinner.size", default = 1)
                   ),
                   width = 5),
-              box(title = textOutput("individualOla5PlotTitle"),
+              box(title = uiOutput("individualOla5PlotTitle"), status = "primary", solidHeader = T,
                   shinycssloaders::withSpinner(plotlyOutput("individualOla5"),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#0275D8"),
@@ -284,10 +404,12 @@ body <- dashboardBody(
     tabItem(tabName = "competition",
             fluidRow(
               box(
-                title = "Competiton",
-                textOutput("competitiondescribtion")
+                title = "Competiton", status = "primary", solidHeader = T,
+                uiOutput("competitiondescribtion"),
+                uiOutput("competitionInteractivityDesc"), width = 6
               ),
               box(
+                status = "primary", solidHeader = T,
                 selectInput("zmienna",
                             "For which variable do you want to summarize?",
                             zmienne,
@@ -299,12 +421,12 @@ body <- dashboardBody(
                             max = max(ActivitiesTogether$Rok),
                             step = 1),
                 width = 6
-                 ),
+                 )
             ),
             
             fluidRow(
               box(
-                title = textOutput("competition1PlotTitle"),
+                title = uiOutput("competition1PlotTitle"), status = "primary", solidHeader = T,
                 shinycssloaders::withSpinner(plotlyOutput("competition1"),
                                              type = getOption("spinner.type", default = 5),
                                              color = getOption("spinner.color", default = "#0275D8"),
@@ -312,39 +434,32 @@ body <- dashboardBody(
                 ),
                 width = 6
               ),
-              box(
-                textOutput("competitionInteractivityDesc"),
-                width=6
-              )
-            ),
-            
-            fluidRow(
-              box(
-               width=6 
-              ),
-              box(
+              box(status = "primary", solidHeader = T,
                 shinycssloaders::withSpinner(plotlyOutput("competition2"),
                                              type = getOption("spinner.type", default = 5),
                                              color = getOption("spinner.color", default = "#0275D8"),
                                              size = getOption("spinner.size", default = 1)
                 )
-              )
+            ),
             )
     ),
     
     tabItem(tabName = "individualMaciek",
             fluidRow(
               box(
-                title = textOutput("individualMaciekdescribtion")
+                uiOutput("individualMaciekdescribtion"),
+                status = "primary", solidHeader = T
               )
             ),
             fluidRow(
               box(
-                title = textOutput("individualMaciek1Desc"),
+                status = "primary",
+                uiOutput("individualMaciek1Desc"),
                 width = 3
               ),
               box(
                 title = "Corelation between steps and calories",
+                status = "primary", solidHeader = T,
                 numericInput("limitKcal", "Type in calories limit", value=max(Kroki_Calorie$Kalorie)),
                 shinycssloaders::withSpinner(plotlyOutput("individualMaciek1"),
                                              type = getOption("spinner.type", default = 5),
@@ -357,6 +472,7 @@ body <- dashboardBody(
             fluidRow(
               box(
                 title = "In which month do I walk the most?",
+                status = "primary", solidHeader = T,
                 shinycssloaders::withSpinner(plotlyOutput("individualMaciek2"),
                                              type = getOption("spinner.type", default = 5),
                                              color = getOption("spinner.color", default = "#0275D8"),
@@ -365,17 +481,20 @@ body <- dashboardBody(
                 width = 6
               ),
               box(
-                title = textOutput("individualMaciek2Desc"),
+                status = "primary",
+                uiOutput("individualMaciek2Desc"),
                 width = 6
               )
             ),
             fluidRow(
-              box(title = textOutput("individualMaciek3Desc"),
+              box(uiOutput("individualMaciek3Desc"),
+                  status = "primary",
                   width = 12
                   )
             ),
             fluidRow(
               box(title = "Average heart rate during exercising per month",
+                  status = "primary", solidHeader = T,
                   shinycssloaders::withSpinner(plotlyOutput("individualMaciek3"),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#0275D8"),
@@ -385,12 +504,13 @@ body <- dashboardBody(
                   )
             ),
             fluidRow(
-              box(           
+              box(status = "primary", solidHeader = T,           
                 selectInput("zmienna_heat_Maciek",
                             "Choose the variable to analyse",
                             zmienne_heat),
                 width = 2),
               box(title = textOutput("individualMaciek4PlotTitle"),
+                  status = "primary", solidHeader = T,
                   shinycssloaders::withSpinner(plotlyOutput("individualMaciek4"),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#0275D8"),
@@ -398,6 +518,7 @@ body <- dashboardBody(
                   ),
                   width = 5),
               box(title = textOutput("individualMaciek5PlotTitle"),
+                  status = "primary", solidHeader = T,
                   shinycssloaders::withSpinner(plotlyOutput("individualMaciek5"),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#0275D8"),
@@ -410,7 +531,7 @@ body <- dashboardBody(
   
   
   ## STYLES
-  
+
   # tags$head(
   #     # # HTML('.main-sidebar { width: 250px; }'),
   #     # # HTML('.content-wrapper, .right-side { margin-left: 250px; }'),
@@ -451,7 +572,7 @@ server <- function(input, output) {
       
       ggplot(activities_plot, aes(x = Type, fill = Type)) +
       geom_bar() +
-      scale_fill_manual(values = c("chartreuse4", "dodgerblue2", "brown2")) +
+      scale_fill_manual(values = c("#1B8E1B", "#54A3E1", "#DF2929")) +
       labs(title = "Number of tracks",
            x = "Type") +
       theme_minimal()+
@@ -473,7 +594,7 @@ server <- function(input, output) {
       
       ggplot(activities_plot, aes(x = Type, y = as.numeric(AvgSpeed), fill = Type)) +
         geom_violin() +
-        scale_fill_manual(values = c("chartreuse4", "dodgerblue2", "brown2")) +
+        scale_fill_manual(values = c("#1B8E1B", "#54A3E1", "#DF2929")) +
         labs(title = "Distribution of average speed",
              x = "Type",
              y = "Average Speed") +
@@ -493,7 +614,7 @@ server <- function(input, output) {
       
       ggplot(activities_plot, aes(x = Hour, fill = Type)) +
         geom_density(alpha = 0.6) +
-        scale_fill_manual(values = c("chartreuse4", "dodgerblue2", "brown2")) +
+        scale_fill_manual(values = c("#1B8E1B", "#54A3E1", "#DF2929")) +
         labs(title = "Density Plot of Activity Distribution Across Hours",
              x = "Hour") +
         theme_minimal()+
@@ -502,46 +623,51 @@ server <- function(input, output) {
       
     })
     
-    output$smldescription <- renderText({
-      "Short/Medium/Long is a tab where our cycling adventure where categorized 
+    output$smldescription <- renderUI({
+      HTML("<div style='text-align: justify;'>
+      Short/Medium/Long is a tab where our cycling adventure where categorized 
       according to the distance. A ride spanning 0-40 kilometers is considered 
       a short track, 40-70 kilometers falls into the medium category, while 
-      anything beyond 70 kilometers is viewed as a long and adventurous expedition."
+      anything beyond 70 kilometers is viewed as a long and adventurous expedition.</div>")
     })
     
-    output$smlchart1 <- renderText({
-      "Explore our track completion trends with this interactive bar chart. 
+    output$smlchart1 <- renderUI({
+      HTML("<div style='text-align: justify;'>
+      Explore our track completion trends with this interactive bar chart. 
       Categories (short, long, medium) are color-coded, and above slider let 
       you focus on specific years.Thanks to this chart, we can see our 
-      preferences regarding track length and how they have changed over the years."
+      preferences regarding track length and how they have changed over the years.</div>")
     })
     
-    output$smlchart2 <- renderText({
-      "On the above chart, you can observe the times of day when we embark on 
+    output$smlchart2 <- renderUI({
+      HTML("<div style='text-align: justify;'>
+      On the above chart, you can observe the times of day when we embark on 
       different types of bike rides. It is noticeable that longer cycling 
       adventures are usually chosen during the morning hours, while shorter 
-      rides tend to take place in the afternoon."
+      rides tend to take place in the afternoon.</div>")
     })
     
-    output$smlchart3 <- renderText({
-      "On this chart, you can observe the speed distribution categorized by the 
+    output$smlchart3 <- renderUI({
+      HTML("<div style='text-align: justify;'>
+      On this chart, you can observe the speed distribution categorized by the 
       type of ride. Surprisingly, the distributions look quite similar. It is 
-      slightly more challenging to maintain a high average speed on longer routes."
+      slightly more challenging to maintain a high average speed on longer routes.</div>")
     })
     
     # individual
     
-    output$individual1 <- renderText({
-      "Initially, cycling for me was associated with leisurely afternoon rides 
+    output$individual1 <- renderUI({
+      HTML("<div style='text-align: justify;'>
+      Initially, cycling for me was associated with leisurely afternoon rides 
       with family or friends. I began to view cycling as a sport when I started 
       riding with my dad, a passionate cycling enthusiast. In the beginning, it was 
       just to enjoy our time together, but later on, I began tracking my time 
       and distance, challenging my own records, aiming to ride faster and farther. 
       The following page is dedicated to more detailed statistics such as speed, 
-      heart rate, pedaling cadence, and riding frequency. <br>
+      heart rate, pedaling cadence, and riding frequency.<br>
       On the right side of the chart, you can observe the correlation between average 
       speed and pulse. It's evident that for longer distances, the relationship is slightly 
-      higher than for shorter ones, even at comparable average speeds."
+      higher than for shorter ones, even at comparable average speeds.</div>")
       
     })
     
@@ -650,7 +776,6 @@ server <- function(input, output) {
       
     })
     output$individualOla4 <- renderPlotly({
-      custom_colors <- c("black", "yellow")
       if(input$zmienna_heat_Ola == "Number of records"){
         output$individualOla4PlotTitle <- renderText({"Number of records in each month"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Ola") %>% group_by(Osoba,Month) %>% summarise(score=n())
@@ -669,7 +794,8 @@ server <- function(input, output) {
               type="bar",
               hoverinfo = "text",
               text = paste("Person: ", df$Osoba, "<br>Month: ", df$Month, paste("<br>",input$zmienna_heat_Ola, ":"), df$score),
-              textposition = "none"
+              textposition = "none",
+              marker = list(color = "#7C065C")
       ) %>% 
         layout( 
           xaxis = list(title = "Month", tickformat=".d",tickvals = unique(df$Month), 
@@ -679,7 +805,6 @@ server <- function(input, output) {
     })
 
     output$individualOla5 <- renderPlotly({
-      custom_colors <- c("black", "yellow")
       if(input$zmienna_heat_Ola == "Number of records"){
         output$individualOla5PlotTitle <- renderText({"Number of records in each day"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Ola") %>% group_by(Osoba,Day) %>% summarise(score=n())
@@ -698,7 +823,8 @@ server <- function(input, output) {
               type="bar",
               hoverinfo = "text",
               text = paste("Person: ", df$Osoba, "<br>Day: ", df$Day, paste("<br>",input$zmienna_heat_Ola, ":"), df$score),
-              textposition = "none"
+              textposition = "none",
+              marker = list(color = "#7C065C")
       ) %>% 
         layout( 
           xaxis = list(title = "Day", tickformat=".d",tickvals = unique(df$Day), 
@@ -747,103 +873,103 @@ server <- function(input, output) {
         
       }
     )
-    output$top5description <- renderText({
-      "Explore our most interesting tracks. The map consists track route, which is coloured in various colors.
+    output$top5description <- renderUI({
+      HTML("<div style='text-align: justify;'>Explore our most interesting tracks. The map consists track route, which is coloured in various colors.
       Each color represents respective speed. Shades of green are used for presenting lower speeds, such as 0 km/h or 10 km/h. 
       Yellow and green color mixtures represent values of speed in range from 10 km/h to 20km/h. Yellow color corresponds to the value of 20km/h,
-      red stands for every speed that is equal to 40 km/h or greater than it. Shades of mixed yellow and red are for values between 20 km/h and 40 km/h."
+      red stands for every speed that is equal to 40 km/h or greater than it. Shades of mixed yellow and red are for values between 20 km/h and 40 km/h.</div>")
     })
     
-    output$descriptionOfTrack <- renderText({
-      text_Kuba_1<-"Monday, 5th of September 2022 at first glance did not seem to become a day, when I set my longest bike trip.  
+    output$descriptionOfTrack <- renderUI({
+      text_Kuba_1<-HTML("<div style='text-align: justify;'>Monday, 5th of September 2022 at first glance did not seem to become a day, when I set my longest bike trip.  
         The starting time of the ride did not indicate that it would be one of the most amazing trips. 
         I messaged my friend Michał, and we met each other on the Most Południowy at 1:00 PM. We planned to reach our beloved Góra Kalwaria and then decide what to do next. 
         Everything went as planned, we also had a decent average speed, the weather was fantastic, so we decided to extend our ride and go to Warka. 
         We have been there quite a few times, but the road to Warka is always really demanding. There are a lot of trucks, so you have to keep the pace and be really cautious. 
         It wasn’t easy at all, but we have made to the city. We stayed there for a several minutes, chilled a little bit, and then started coming back. The route to Warsaw was completed without any major obstacles. 
         We had a really good average speed, I was feeling that my muscles aren’t that tired, so I have decided to extend the ride in Warsaw. 
-        I managed to do extra 50 kilometres, I was extremely exhausted, but also very happy of this achievement."
+        I managed to do extra 50 kilometres, I was extremely exhausted, but also very happy of this achievement.</div>")
       
-      text_Kuba_2<-"I have been planning this trip with my bike comrade Michał for a year. 
+      text_Kuba_2<-HTML("<div style='text-align: justify;'>I have been planning this trip with my bike comrade Michał for a year. 
        We couldn’t find the time for it, but finally on the last day of summer holidays, on 31.08.2021 we managed to realize our “dream”. Until we reached Warka, we didn’t have much difficulties. 
        The troubles began after leaving the city. We did not know the route perfectly and even with GPS we had difficulties. We landed in forest two times, the road surface was terrible, we were moving with really low speed. 
-       But in the end, we reached our destination. We didn’t have time to stay there, as the departure time of train was near."
+       But in the end, we reached our destination. We didn’t have time to stay there, as the departure time of train was near.</div>")
       
-      text_Kuba_3<-"The route to Warka on June 22nd 2022 was another trip to our liked place. 
+      text_Kuba_3<-HTML("<div style='text-align: justify;'>The route to Warka on June 22nd 2022 was another trip to our liked place. 
         We started cycling around 10:00 AM. The weather was quite bearable, there was around 22°C. The trip was mostly peaceful. We did not have any troubles and difficulties. 
         We stayed and chilled in Warka for some time and managed to comeback to Warsaw without any unexpected adventures. In the meantime we had a stop at our favourite grocery shop in Góra Kalwaria. 
-        We recharged our batteries and rode with quite good pace to our final destination."
+        We recharged our batteries and rode with quite good pace to our final destination.</div>")
       
-      text_Kuba_4<-"This trip was the only one from considered routes, that I rode alone. It was just an ordinary trip do Góra Kalwaria. However I did it on Sunday, which was actually quite surprising, because I usually don’t go cycling on that day. 
+      text_Kuba_4<-HTML("<div style='text-align: justify;'>This trip was the only one from considered routes, that I rode alone. It was just an ordinary trip do Góra Kalwaria. However I did it on Sunday, which was actually quite surprising, because I usually don’t go cycling on that day. 
         I felt power on that day, as the average speed shows –  26,2 km/h. I did the first part in less than hour, I felt huge exhaust, so the second part was much more difficult. 
-        However I managed to return to home with a lot of effort, but the prize waiting in home – lying on the bed and resting – was infusing hope and peace."
+        However I managed to return to home with a lot of effort, but the prize waiting in home – lying on the bed and resting – was infusing hope and peace.</div>")
       
-      text_Kuba_5<-"The last trip is the oldest one – from 29 June 2021. It was not filled with high speed, however it was quite interesting. 
+      text_Kuba_5<-HTML("<div style='text-align: justify;'>The last trip is the oldest one – from 29 June 2021. It was not filled with high speed, however it was quite interesting. 
        Me and my two friends decided to visit Zalew Zegrzyński. We rode through Jabłonna and Legionowo quite peacefully. Then we reached Nieporęt, our expected destination. 
        Even though we did not have bath costumes, we have decided to splash a little. It was really hot, so the danger of catching a cold was rather negligible. However it wasn’t the end of bathing. 
        Our friend’s girlfriend called him and asked whether him whether we would like to join her in Zielonka. We were really enthusiastic about it and quickly rode there. We had quite a lot of fun there too and then we finally split up and ended in our homes. I managed to do 100 km, so that’s a lovely result. 
-       Great fun, which was there will certainly stay in my heart for a long time."
+       Great fun, which was there will certainly stay in my heart for a long time.</div>")
       
-      text_Maciek_1<-"On 3rd of June 2022 just after mature exams with my friends we decided to take a trip around the suburbs of Zamość to celebrate
+      text_Maciek_1<-HTML("<div style='text-align: justify;'>On 3rd of June 2022 just after mature exams with my friends we decided to take a trip around the suburbs of Zamość to celebrate
       the end of the school year and spend some time on fresh air after months of studying. It took us about 7,5 hours and I buried almost 1700 kcal. 
-      It was great experience because we were aware that we had 4 months of vacation ahead of us"
+      It was great experience because we were aware that we had 4 months of vacation ahead of us</div>")
       
-      text_Maciek_2<-"This is just one of my favourite routes in Zamość. Take a look :)."
+      text_Maciek_2<-HTML("<div style='text-align: justify;'>This is just one of my favourite routes in Zamość. Take a look :)</div>")
       
-      text_Maciek_3<-"On 28th of August 2023 I decided to do a challenge to beat my previous record in riding to my girlfriend as fast as possible.
+      text_Maciek_3<-HTML("<div style='text-align: justify;'>On 28th of August 2023 I decided to do a challenge to beat my previous record in riding to my girlfriend as fast as possible.
       And so I did it. 9 kilometers with average speed 22 km/h. It was really challenging and in the end I was sweating so much that I had to take a
-      shower and change clothes which were soaked. But it was fantastic day and I won't forget it."
+      shower and change clothes which were soaked. But it was fantastic day and I won't forget it.</div>")
       
-      text_Maciek_4<-"On 29th of May 2020 I rode with a group of friends to the lagoon nearby Zamość. A really bumpy road with lots of challenging hills.
+      text_Maciek_4<-HTML("<div style='text-align: justify;'>On 29th of May 2020 I rode with a group of friends to the lagoon nearby Zamość. A really bumpy road with lots of challenging hills.
       As it was just after lockdown caused by COVID we were so happy to finally leave our houses and meet up for this adventure. The road shown on the chart
-      is only one way. While we were returning it was significantly easier, because we were going downhill and all in all we made about 70 km this day."
+      is only one way. While we were returning it was significantly easier, because we were going downhill and all in all we made about 70 km this day.</div>")
       
-      text_Maciek_5<-"And finally Warsaw. My first longer trip took place on 29th of July 2023. I transported my bike from my home town and started
+      text_Maciek_5<-HTML("<div style='text-align: justify;'>And finally Warsaw. My first longer trip took place on 29th of July 2023. I transported my bike from my home town and started
       sightseeing the surroundings. A large part of the ride was in Wilanów, because I really enjoyed this district and couldn't leave it. All the time there was
-      something interesting there that I wanted to check."
+      something interesting there that I wanted to check.</div>")
       
-      text_Ola_1<-": On September 2nd, I decided to go for a bike ride along one of my favourite routes, known as the \"around the chimneys\" trail. 
+      text_Ola_1<-HTML("<div style='text-align: justify;'>On September 2nd, I decided to go for a bike ride along one of my favourite routes, known as the \"around the chimneys\" trail. 
         No, it doesn't mean that I passed by chimneys along the way. In my family, we refer to routes that lead through villages near our town as \"around the chimneys\" trails. 
-        The route mainly follows side roads, so there isn't too much traffic on it, which makes this route really nice."
+        The route mainly follows side roads, so there isn't too much traffic on it, which makes this route really nice.</div>")
       
-      text_Ola_2<-"A quick trip to the Wisła, unfortunately, this time without a break for splashing in the water. 
+      text_Ola_2<-HTML("<div style='text-align: justify;'>A quick trip to the Wisła, unfortunately, this time without a break for splashing in the water. 
         This route is a very pleasant option for a slightly longer excursion. On the morning of August 13th, I took this route with my dad – a huge cycling enthusiast. 
-        It was a very successful outing. Unfortunately, this route has one drawback – crossing a very busy street, which can be challenging and sometimes dangerous."
+        It was a very successful outing. Unfortunately, this route has one drawback – crossing a very busy street, which can be challenging and sometimes dangerous.</div>")
       
-      text_Ola_3<-"A quick ride to Kołbiel with a satisfying average speed of 27.6 km/h. On the way to Kołbiel, 
+      text_Ola_3<-HTML("<div style='text-align: justify;'>A quick ride to Kołbiel with a satisfying average speed of 27.6 km/h. On the way to Kołbiel, 
         I rode along the express road S17, which wasn't the most enjoyable due to the noise from the busy street. However, on the way back home, 
-        I took the route through the surrounding villages, which was significantly more pleasant."
+        I took the route through the surrounding villages, which was significantly more pleasant.</div>")
       
-      text_Ola_4<-"On July 23rd, I embarked on another cycling adventure, heading to Parysów, a beautiful town with a charming market square. 
+      text_Ola_4<-HTML("<div style='text-align: justify;'>On July 23rd, I embarked on another cycling adventure, heading to Parysów, a beautiful town with a charming market square. 
         Just before entering the town, there's a steep hill, which climbing up is always a huge challenge. Afterward, I headed towards Michałówka. 
         Initially, I planned to return through Osieck. Unfortunately, it was a very hot July morning, and I could feel strength in my legs fading. 
-        In Huta, I decided to shorten my route by a few kilometres and head back home."
+        In Huta, I decided to shorten my route by a few kilometres and head back home.</div>")
       
-      text_Ola_5<-"The cycling trip from June 11th is one of my favourites. Along the way, I encountered a group of cyclists who suggested that I join them. I gladly agreed. 
+      text_Ola_5<-HTML("<div style='text-align: justify;'>The cycling trip from June 11th is one of my favourites. Along the way, I encountered a group of cyclists who suggested that I join them. I gladly agreed. 
         Riding in a peloton is a completely different experience. Following behind other cyclists is much easier, and I don't tire as quickly. 
-        The new friends turned out to be a very cool group of people. I hope we'll catch up on the road again!"
+        The new friends turned out to be a very cool group of people. I hope we'll catch up on the road again!</div>")
       
       eval(parse(text=paste("text",input$track,input$number_of_track,sep="_")))
     })
-    output$individualTextKuba1 <- renderText({
-      "Cycling for me was always a good form of spending my free time. 
+    output$individualTextKuba1 <- renderUI({
+      HTML("<div style='text-align: justify;'>Cycling for me was always a good form of spending my free time. 
       Back when I was younger I used to ride with my dad. 
       The routes weren’t as long as they became later, but I always treated cycling as a great form of relaxation.
       I changed my perspective in high school, when I met my friend Michał. 
       Our relation wasn’t connected in no way with riding a bike. Everything changed on 2020 summer. 
       We came with an idea of meeting each other and decided to try to ride to Góra Kalwaria. 
-      This was a beginning of a beautiful story, the fruits of which you can see here."
+      This was a beginning of a beautiful story, the fruits of which you can see here.</div>")
       
     })
-    output$individualTextKuba2 <- renderText({
-      "The first plot shows the relations between distance and actual spent time on riding a bike.   
+    output$individualTextKuba2 <- renderUI({
+      HTML("<div style='text-align: justify;'>The first plot shows the relations between distance and actual spent time on riding a bike.   
       The y-axis value corresponds to fraction of the ride, in which speed was greater than zero. 
       So for example when my ride had a value of 79, this means that the 79% of the time I recorded activity were actually ridden. 
-      The 21% of the time I spent on waiting for light change or I was just chilling and regenerating."
+      The 21% of the time I spent on waiting for light change or I was just chilling and regenerating.</div>")
       
     })
-    output$individualTextKuba3 <- renderText({
-      "\n
+    output$individualTextKuba3 <- renderUI({
+      HTML("<div style='text-align: justify;'>
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec maximus arcu dictum, 
       lobortis velit quis, euismod libero. Phasellus pretium, dolor nec cursus volutpat, 
       ipsum velit maximus eros, sit amet ornare ante tortor id nisl. 
@@ -853,7 +979,7 @@ server <- function(input, output) {
       pretium sollicitudin magna. Suspendisse consequat rhoncus leo vel dignissim. Nulla facilisi.
       In ornare nulla in libero dignissim, ut tempus mi aliquam. Proin eu nisi ligula. 
       Vivamus egestas justo sem, vitae volutpat ligula hendrerit sed. Nulla sit amet ante felis. 
-      Vivamus sagittis tristique diam quis elementum.."
+      Vivamus sagittis tristique diam quis elementum.</div>")
       
     })
     output$individualPlotKuba1<-renderPlotly({
@@ -866,7 +992,7 @@ server <- function(input, output) {
       plot_ly(data=sml_elapsed_moving_time,
               x=~Distance,
               y=~(100*percent_of_ridden_time),
-              color=~length_of_track,colors=c("brown2", "dodgerblue2","chartreuse4" ))%>%
+              color=~length_of_track,colors=c("#1B8E1B", "#54A3E1", "#DF2929"))%>%
         layout(title="Relation between distance and actual time spend on the ride",
                  yaxis=list(title="Percent of time spent on the ride"))
     })
@@ -880,7 +1006,6 @@ server <- function(input, output) {
         "<strong>Minimum/Maximum elevation: </strong>", paste(max_elevations$min_max,": ",max_elevations$ele," m",sep=""), "<br>"))
       })
     output$individualKuba4 <- renderPlotly({
-      custom_colors <- c("black", "yellow")
       if(input$zmienna_heat_Kuba == "Number of records"){
         output$individualKuba4PlotTitle <- renderText({"Number of records in each month"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Kuba") %>% group_by(Osoba,Month) %>% summarise(score=n())
@@ -899,7 +1024,8 @@ server <- function(input, output) {
               type="bar",
               hoverinfo = "text",
               text = paste("Person: ", df$Osoba, "<br>Month: ", df$Month, paste("<br>",input$zmienna_heat_Kuba, ":"), df$score),
-              textposition = "none"
+              textposition = "none",
+              marker = list(color = "#41AA38")
       ) %>% 
         layout( 
           xaxis = list(title = "Month", tickformat=".d",tickvals = unique(df$Month), 
@@ -909,7 +1035,6 @@ server <- function(input, output) {
     })
     
     output$individualKuba5 <- renderPlotly({
-      custom_colors <- c("black", "yellow")
       if(input$zmienna_heat_Kuba == "Number of records"){
         output$individualKuba5PlotTitle <- renderText({"Number of records in each day"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Kuba") %>% group_by(Osoba,Day) %>% summarise(score=n())
@@ -928,7 +1053,8 @@ server <- function(input, output) {
               type="bar",
               hoverinfo = "text",
               text = paste("Person: ", df$Osoba, "<br>Day: ", df$Day, paste("<br>",input$zmienna_heat_Kuba, ":"), df$score),
-              textposition = "none"
+              textposition = "none",
+              marker = list(color = "#41AA38")
       ) %>% 
         layout( 
           xaxis = list(title = "Day", tickformat=".d",tickvals = unique(df$Day), 
@@ -978,17 +1104,17 @@ server <- function(input, output) {
         layout(xaxis = list(title = "Person"), yaxis = list(title = input$zmienna,tickformat = ",d",range=yaxisRange))
       })
       
-      output$competitiondescribtion <- renderText({
-        "Competition tab is where our activity is summarised. Here we compare 
+      output$competitiondescribtion <- renderUI({
+        HTML("<div style='text-align: justify;'>Competition tab is where our activity is summarised. Here we compare 
         ourselves depending on total distance, average speed or time
-        spent on cycling in minutes."
+        spent on cycling in minutes.</div>")
       })
       
-      output$competitionInteractivityDesc <- renderText({
-        "Explore our scores with those two charts. The bar chart consists summarized score in
+      output$competitionInteractivityDesc <- renderUI({
+        HTML("<div style='text-align: justify;'>Explore our scores with those two charts. The bar chart consists summarized score in
         selected period of time while linear chart shows the progress throughout years. You can easily change 
         considering topic on the top of this text and select years with slider. (Note that slider doesn't affect 
-        linear chart. Otherwise this chart would make no sense)"
+        linear chart. Otherwise this chart would make no sense)</div>")
         
       })
       #competition2
@@ -1033,15 +1159,15 @@ server <- function(input, output) {
           layout(xaxis = list(rangeslider = list(type = "Kroki")))
       })
       
-      output$individualMaciekdescribtion <- renderText({
-        "Describtion of this section"
+      output$individualMaciekdescribtion <- renderUI({
+        HTML("<div style='text-align: justify;'>Describtion of this section</div>")
       })
-      output$individualMaciek1Desc <- renderText({
-        "Let's look at the chart on the right. You can manipulate the x axis by slider and y axis by typing the limit.
+      output$individualMaciek1Desc <- renderUI({
+        HTML("<div style='text-align: justify;'>Let's look at the chart on the right. You can manipulate the x axis by slider and y axis by typing the limit.
         The chart shows how calories change depending on the amount of steps. Each white dot shows calories buried and steps made in each day. 
         If we properly check the smaller values as Steps <= 20000 and Calories <= 500 we would see the linear dependence
         highlighted. This may suggest that those records are days in which I did not ride a bike and I was only walking, whereas records with
-        less steps and more calories buried are days in which I did excercise on bike and did not walk that much."
+        less steps and more calories buried are days in which I did excercise on bike and did not walk that much.</div>")
       })
       
       output$individualMaciek2 <- renderPlotly({
@@ -1055,10 +1181,10 @@ server <- function(input, output) {
                  barmode = "stack")
       })
       
-      output$individualMaciek2Desc <- renderText({
-        "This chart shows us how amount of steps depend on the month. As you can notice there is a significant difference between summer months
+      output$individualMaciek2Desc <- renderUI({
+        HTML("<div style='text-align: justify;'>This chart shows us how amount of steps depend on the month. As you can notice there is a significant difference between summer months
         and month in winter. I walk most often during summer break in June,July,August and September. As you can also see in 2020 I used to take walks
-        almost in every month and I made more steps comparing to other years. That may be due to more freetime and less responibilities."
+        almost in every month and I made more steps comparing to other years. That may be due to more freetime and less responibilities.</div>")
       })
       
       output$individualMaciek3 <- renderPlotly({
@@ -1076,14 +1202,13 @@ server <- function(input, output) {
           theme(axis.text.x = element_text(angle = 45, hjust = 1)))
       })
       
-      output$individualMaciek3Desc <- renderText({
-        "The chart below shows the change of my heart rate in each day of the years during excercising. It's easy to see that in winter months
+      output$individualMaciek3Desc <- renderUI({
+        HTML("<div style='text-align: justify;'>The chart below shows the change of my heart rate in each day of the years during excercising. It's easy to see that in winter months
         there were less records, while during summer this line plot breaks often. In 2020 my heart rate was a little higher than in 
-        2021,2022 and 2023. THe average is around 93 beats per minute."
+        2021,2022 and 2023. THe average is around 93 beats per minute.</div>")
       })
       
       output$individualMaciek4 <- renderPlotly({
-        custom_colors <- c("black", "yellow")
         if(input$zmienna_heat_Maciek == "Number of records"){
           output$individualMaciek4PlotTitle <- renderText({"Number of records in each month"})
           df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Maciek") %>% group_by(Osoba,Month) %>% summarise(score=n())
@@ -1102,7 +1227,8 @@ server <- function(input, output) {
                 type="bar",
                 hoverinfo = "text",
                 text = paste("Person: ", df$Osoba, "<br>Month: ", df$Month, paste("<br>",input$zmienna_heat_Maciek, ":"), df$score),
-                textposition = "none"
+                textposition = "none",
+                marker = list(color = "#2242A2")
         ) %>% 
           layout( 
             xaxis = list(title = "Month", tickformat=".d",tickvals = unique(df$Month), 
@@ -1132,7 +1258,8 @@ server <- function(input, output) {
                 type="bar",
                 hoverinfo = "text",
                 text = paste("Person: ", df$Osoba, "<br>Day: ", df$Day, paste("<br>",input$zmienna_heat_Maciek, ":"), df$score),
-                textposition = "none"
+                textposition = "none",
+                marker = list(color = "#2242A2")
         ) %>% 
           layout( 
             xaxis = list(title = "Day", tickformat=".d",tickvals = unique(df$Day), 
