@@ -13,6 +13,7 @@ library(leaflet)
 library(geosphere)
 library(htmlwidgets)
 library(dashboardthemes)
+library(shinycssloaders)
 
 #setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
 activities_Ola <- read.csv("activities_Ola.csv")
@@ -174,6 +175,7 @@ sidebar <- dashboardSidebar(
   width = 300,
   
   sidebarMenu(
+  menuItem("Home", tabName = "home",icon = icon("home")),
   menuItem("TOP 5", tabName = "top5", icon = icon("map")),
   menuItem("Short/Medium/Long", tabName = "sml", icon = icon("chart-simple")),
   menuItem("Competition", tabName = "competition", icon = icon("trophy")),
@@ -195,6 +197,33 @@ body <- dashboardBody(
   
   tabItems(
     ### Kuba ###
+       tabItem(tabName="home",
+               fluidRow(
+                 uiOutput("homePageDescription")
+               ),
+               fluidRow(column(
+                 width=12,
+                 offset=0,
+                 style="text-align: center;",
+                 imageOutput("magickGif")
+              )),
+              fluidRow(
+                
+                column(4, h1("Kuba", align = "center")),
+                
+                column(4, h1("Maciek", align = "center")),
+                
+                column(4, h1("Ola", align = "center"))
+              ),
+              fluidRow(
+                
+                column(4, img(src = "ikona3-1.png", width = 300, height = 300),style="text-align: center;"),
+                
+                column(4, img(src = "ikona2-1.png", width = 300, height = 300),style="text-align: center;"),
+                
+                column(4, img(src = "ikona1-1.png", width = 300, height = 300),style="text-align: center;")
+              )
+              ),
     
        tabItem(tabName = "top5",
            
@@ -818,7 +847,15 @@ server <- function(input, output) {
     })
       
       ### Kuba ###
-      
+    
+    gif_path<-"D:\\r_pro_2\\repo_pro\\Repo2\\Project2\\www\\cyclist.gif"
+    img<-image_read(gif_path)
+    
+    output$magickGif<-renderImage({
+      list(src="www/cyclist-3.gif",
+           contentType = 'image/gif')
+    },deleteFile = FALSE)
+    
     output$mapOfTrack <- renderLeaflet(
       {
         mydata<-read.csv(paste("Top5_Activities\\activity_",input$track,"_",input$number_of_track,".csv",sep=""))
@@ -857,6 +894,11 @@ server <- function(input, output) {
         
       }
     )
+    output$homePageDescription<-renderUI({HTML("<div style='text-align: justify; font-size: 18px; margin: 20px;'>I have been planning this trip with my bike comrade Michał for a year. 
+       We couldn’t find the time for it, but finally on the last day of summer holidays, on 31.08.2021 we managed to realize our “dream”. Until we reached Warka, we didn’t have much difficulties. 
+       The troubles began after leaving the city. We did not know the route perfectly and even with GPS we had difficulties. We landed in forest two times, the road surface was terrible, we were moving with really low speed. 
+       But in the end, we reached our destination. We didn’t have time to stay there, as the departure time of train was near.</div>")
+    })
     output$top5description <- renderUI({
       HTML("<div style='text-align: justify;'>Explore our most interesting tracks. The map consists track route, which is coloured in various colors.
       Each color represents respective speed. Shades of green are used for presenting lower speeds, such as 0 km/h or 10 km/h. 
