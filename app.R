@@ -12,10 +12,13 @@ library(scales)
 library(leaflet)
 library(geosphere)
 library(htmlwidgets)
+#install.packages("dashboardthemes")
 library(dashboardthemes)
 library(shinycssloaders)
+#install.packages("magick")
+library(magick)
 
-#setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
+setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
 activities_Ola <- read.csv("activities_Ola.csv")
 ActivitiesIndividual_Ola <- read.csv("ActivitiesIndividual_Ola.csv")
 
@@ -848,7 +851,7 @@ server <- function(input, output) {
       
       ### Kuba ###
     
-    gif_path<-"D:\\r_pro_2\\repo_pro\\Repo2\\Project2\\www\\cyclist.gif"
+    gif_path<-"www\\cyclist.gif"
     img<-image_read(gif_path)
     
     output$magickGif<-renderImage({
@@ -1130,6 +1133,9 @@ server <- function(input, output) {
               x=~Osoba,
               y=~score,
               color=~Osoba,
+              hoverinfo = "text",
+              text = paste("Person: ", df$Osoba, paste("<br>",input$zmienna, ":"), df$score),
+              textposition = "none",
               colors = c("#F9B330","#263672", "#7C065C"),
               type = "bar") %>% 
         layout(xaxis = list(title = "Person"), yaxis = list(title = input$zmienna,tickformat = ",d",range=yaxisRange))
@@ -1173,6 +1179,9 @@ server <- function(input, output) {
                 y=~score,
                 type="scatter",
                 mode="lines",
+                hoverinfo = "text",
+                text = paste("Person: ", df$Osoba, paste("<br>",input$zmienna, ":"), df$score, "<br>Year: ", df$Rok),
+                textposition = "none",
                 line = list(width = 4),
                 color = ~Osoba,
                 colors = c("#F9B330","#263672", "#7C065C")
@@ -1184,12 +1193,14 @@ server <- function(input, output) {
       })
       
       output$individualMaciek1 <- renderPlotly({
-        
-        ggplotly(Kroki_Calorie  %>% filter(Kalorie <= input$limitKcal) %>%  ggplot(aes(x=Kroki,y=Kalorie)) + stat_density2d(geom="tile", aes(fill = after_stat(density)), contour = FALSE) +
+        df <- Kroki_Calorie
+        colnames(df)[2] <- "Steps"
+        colnames(df)[3] <- "Calories"
+        ggplotly(df  %>% filter(Calories <= input$limitKcal) %>%  ggplot(aes(x=Steps,y=Calories)) + stat_density2d(geom="tile", aes(fill = after_stat(density)), contour = FALSE) +
           geom_point(colour = "white") + theme_minimal() +
           geom_smooth() +  
           theme(legend.position = "none") + labs(x = "Steps", y= "Calories (kcal)")) %>%
-          layout(xaxis = list(rangeslider = list(type = "Kroki")))
+          layout(xaxis = list(rangeslider = list(type = "Steps")))
       })
       
       output$individualMaciekdescribtion <- renderUI({
@@ -1204,11 +1215,14 @@ server <- function(input, output) {
       })
       
       output$individualMaciek2 <- renderPlotly({
-          Kroki_Calorie %>%
+          df <- Kroki_Calorie %>%
           mutate(miesiac = factor(month(recordDay)), rok=factor(year(recordDay))) %>% 
           filter(rok != "2019") %>% 
-          group_by(miesiac, rok) %>% summarise(n = sum(Kroki)) %>%  
-          plot_ly(x=~miesiac,y=~n,type="bar", color =~factor(rok), colors = c("#263672", "#5A78CD", "#9F3BAF", "#DC2AA9"),
+          group_by(miesiac, rok) %>% summarise(n = sum(Kroki)) 
+          plot_ly(df, x=~miesiac,y=~n,type="bar", color =~factor(rok), colors = c("#263672", "#5A78CD", "#9F3BAF", "#DC2AA9"),
+                  hoverinfo = "text",
+                  text = paste("Month: ",df$miesiac,", Year: ", df$rok, "<br>Steps: ", df$n),
+                  textposition = "none",
                   marker = list(colorscale = 'category10')) %>% 
           layout(yaxis = list(title = "Steps",tickformat = ".d"),
                  xaxis = list(title="month"),
@@ -1223,17 +1237,17 @@ server <- function(input, output) {
       
       output$individualMaciek3 <- renderPlotly({
         ggplotly(HeartRate_Maciek %>%
-          mutate(mean_pulse = mean(avgPulse),rok = factor(year(recordDay))) %>% 
-          filter(rok != "2019") %>% 
-          ggplot(aes(x = recordDay, y = avgPulse)) + 
-          scale_x_datetime(labels = date_format("%Y-%m"), breaks = date_breaks("months")) + 
-          geom_line(color = "darkred") +
-          geom_hline(aes(yintercept = mean_pulse, color = "Average overall"), linetype = "dashed", size = 1) +
-          labs(x = "",
-               y = "beats per minute",
-               color = "") +
-          theme_minimal() +
-          theme(axis.text.x = element_text(angle = 45, hjust = 1)))
+                   mutate(mean_pulse = mean(avgPulse),rok = factor(year(recordDay))) %>% 
+                   filter(rok != "2019") %>% 
+                   ggplot(aes(x = recordDay, y = avgPulse)) + 
+                   scale_x_datetime(labels = date_format("%Y-%m"), breaks = date_breaks("months")) + 
+                   geom_line(color = "darkred") +
+                   geom_hline(aes(yintercept = mean_pulse, color = "Average overall"), linetype = "dashed", size = 1) +
+                   labs(x = "",
+                        y = "beats per minute",
+                        color = "") +
+                   theme_minimal() +
+                   theme(axis.text.x = element_text(angle = 45, hjust = 1)))
       })
       
       output$individualMaciek3Desc <- renderUI({
