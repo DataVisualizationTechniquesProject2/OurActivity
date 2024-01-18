@@ -1236,24 +1236,38 @@ server <- function(input, output) {
       })
       
       output$individualMaciek3 <- renderPlotly({
-        ggplotly(HeartRate_Maciek %>%
-                   mutate(mean_pulse = mean(avgPulse),rok = factor(year(recordDay))) %>% 
-                   filter(rok != "2019") %>% 
-                   ggplot(aes(x = recordDay, y = avgPulse)) + 
-                   scale_x_datetime(labels = date_format("%Y-%m"), breaks = date_breaks("months")) + 
-                   geom_line(color = "darkred") +
-                   geom_hline(aes(yintercept = mean_pulse, color = "Average overall"), linetype = "dashed", size = 1) +
-                   labs(x = "",
-                        y = "beats per minute",
-                        color = "") +
-                   theme_minimal() +
-                   theme(axis.text.x = element_text(angle = 45, hjust = 1)))
+        df <- HeartRate_Maciek %>%
+          mutate(mean_pulse = mean(avgPulse),rok = factor(year(recordDay)), miesiac = factor(month(recordDay))) %>% 
+          group_by(rok, miesiac) %>% summarise(average_pulse = mean(avgPulse)) %>% mutate(recordTime = sprintf("%s-%02d-01", rok, miesiac))
+        df$recordTime <- as.POSIXct(df$recordTime, format = "%Y-%m-%d")
+          # HeartRate_Maciek %>%
+          #          mutate(mean_pulse = mean(avgPulse),rok = factor(year(recordDay))) %>% 
+          #          filter(rok != "2019") %>% 
+          #          ggplot(aes(x = recordDay, y = avgPulse)) + 
+          #          scale_x_datetime(labels = date_format("%Y-%m"), breaks = date_breaks("months")) + 
+          #          geom_line(color = "darkred") +
+          #          geom_hline(aes(yintercept = mean_pulse, color = "Average overall"), linetype = "dashed", size = 1) +
+          #          labs(x = "",
+          #               y = "beats per minute",
+          #               color = "") +
+          #          theme_minimal() +
+          #          theme(axis.text.x = element_text(angle = 45, hjust = 1))
+          plot<-df %>% filter(rok != "2019") %>% 
+            ggplot(aes(x = recordTime, y = average_pulse)) + 
+            scale_x_datetime(labels = date_format("%Y-%m"), breaks = date_breaks("months")) + 
+            geom_line(color = "darkred") +
+            labs(x = "Date",
+                 y = "Beats per minute",
+                 color = "") +
+            theme_minimal() +
+            theme(axis.text.x = element_text(angle = 45, hjust = 1))
+            
+          ggplotly(plot)
+          
       })
       
       output$individualMaciek3Desc <- renderUI({
-        HTML("<div style='text-align: justify;'>The chart below shows the change of my heart rate in each day of the years during excercising. It's easy to see that in winter months
-        there were less records, while during summer this line plot breaks often. In 2020 my heart rate was a little higher than in 
-        2021,2022 and 2023. THe average is around 93 beats per minute.</div>")
+        HTML("<div style='text-align: justify;'>The chart below shows the change of my heart rate in each month of the years during excercising.</div>")
       })
       
       output$individualMaciek4 <- renderPlotly({
