@@ -18,7 +18,7 @@ library(shinycssloaders)
 #install.packages("magick")
 library(magick)
 
-setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
+#setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
 activities_Ola <- read.csv("activities_Ola.csv")
 ActivitiesIndividual_Ola <- read.csv("ActivitiesIndividual_Ola.csv")
 
@@ -320,7 +320,7 @@ body <- dashboardBody(
             fluidRow(
               box(title = "What type of routes do we most frequently choose?", 
                   status = "primary", solidHeader = T,
-                  shinycssloaders::withSpinner(plotOutput("hisPlot"),
+                  shinycssloaders::withSpinner(plotlyOutput("hisPlot"),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#394572"),
                                                size = getOption("spinner.size", default = 1)
@@ -340,7 +340,7 @@ body <- dashboardBody(
             
             fluidRow(
               box(title = "When do we go cycling?", status = "primary", solidHeader = T,
-                  shinycssloaders::withSpinner(plotOutput("densityPlot"),
+                  shinycssloaders::withSpinner(plotlyOutput("densityPlot"),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#394572"),
                                                size = getOption("spinner.size", default = 1)
@@ -349,7 +349,7 @@ body <- dashboardBody(
               
               box(title = "Does the length of the route affect our average speed?",
                   status = "primary", solidHeader = T,
-                  shinycssloaders::withSpinner(plotOutput("violinPlot"),
+                  shinycssloaders::withSpinner(plotlyOutput("violinPlot"),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#394572"),
                                                size = getOption("spinner.size", default = 1)
@@ -365,7 +365,7 @@ body <- dashboardBody(
                   status = "primary", solidHeader = T,
                   uiOutput("individual1"), width = 6),
               box(status = "primary",
-                  shinycssloaders::withSpinner(plotOutput("individualOla1"),
+                  shinycssloaders::withSpinner(plotlyOutput("individualOla1"),
                                                type = getOption("spinner.type", default = 5),
                                                color = getOption("spinner.color", default = "#394572"),
                                                size = getOption("spinner.size", default = 1)
@@ -566,7 +566,7 @@ ui <- dashboardPage(header, sidebar, body)
 
 server <- function(input, output) {
 
-    output$hisPlot <- renderPlot({
+    output$hisPlot <- renderPlotly({
       
       ### Ola ###
       
@@ -584,10 +584,9 @@ server <- function(input, output) {
         filter(activities_Ola$Year >= input$zakres1[1],
                activities_Ola$Year <= input$zakres1[2]) %>% 
         filter(Osoba == input$person)-> activities_plot
-
       
-      ggplot(activities_plot, aes(x = Type, fill = Type)) +
-      geom_bar() +
+      p <- ggplot(activities_plot, aes(x = Type, fill = Type, text = paste("<br>Number of tracks: ", after_stat(count)))) +
+      geom_bar(stat = "count") +
       scale_fill_manual(values = c("#53296E", "#6B82DB", "#f9a13c")) +
       labs(title = "Number of tracks",
            x = "Type") +
@@ -595,20 +594,21 @@ server <- function(input, output) {
       theme(legend.position = "none", plot.title = element_text(hjust = 0.5),
               axis.title.y = element_blank()) +
       coord_cartesian(ylim = c(0, max_coord))
-        
+      
+      ggplotly(p, tooltip = c("text"))
 
     })
     
     
     
-    output$violinPlot <- renderPlot({
+    output$violinPlot <- renderPlotly({
       
       activities_Ola$Type <- factor(activities_Ola$Type, levels = c("Short", "Medium", "Long"))
       
       activities_Ola %>%
         filter(Osoba == input$person)-> activities_plot
       
-      ggplot(activities_plot, aes(x = Type, y = as.numeric(AvgSpeed), fill = Type)) +
+      p <-ggplot(activities_plot, aes(x = Type, y = as.numeric(AvgSpeed), fill = Type)) +
         geom_violin() +
         scale_fill_manual(values = c("#53296E", "#6B82DB", "#f9a13c")) +
         labs(title = "Distribution of average speed",
@@ -618,17 +618,19 @@ server <- function(input, output) {
         theme(legend.position = "none", plot.title = element_text(hjust = 0.5)) +
         coord_cartesian(ylim = c(0, 35))
       
+      ggplotly(p) %>% 
+        style(hoverinfo = "none")
       
     })
     
-    output$densityPlot <- renderPlot({
+    output$densityPlot <- renderPlotly({
       
       activities_Ola$Type <- factor(activities_Ola$Type, levels = c("Short", "Medium", "Long"))
       
       activities_Ola %>%
         filter(Osoba == input$person)-> activities_plot
       
-      ggplot(activities_plot, aes(x = Hour, fill = Type)) +
+      p <- ggplot(activities_plot, aes(x = Hour, fill = Type)) +
         geom_density(alpha = 0.75) +
         scale_fill_manual(values = c("#53296E", "#6B82DB", "#f9a13c")) +
         labs(title = "Density Plot of Activity Distribution Across Hours",
@@ -636,6 +638,10 @@ server <- function(input, output) {
         theme_minimal()+
         theme(legend.position = "none", plot.title = element_text(hjust = 0.5),
               axis.title.y = element_blank())
+      
+      ggplotly(p) %>% 
+        style(hoverinfo = "none")
+      
       
     })
     
@@ -657,6 +663,7 @@ server <- function(input, output) {
     
     output$smlchart2 <- renderUI({
       HTML("<div style='text-align: justify;'>
+      <br>
       On the above chart, you can observe the times of day when we embark on 
       different types of bike rides. It is noticeable that longer cycling 
       adventures are usually chosen during the morning hours, while shorter 
@@ -665,6 +672,7 @@ server <- function(input, output) {
     
     output$smlchart3 <- renderUI({
       HTML("<div style='text-align: justify;'>
+      <br>
       On this chart, you can observe the speed distribution categorized by the 
       type of ride. Surprisingly, the distributions look quite similar. It is 
       slightly more challenging to maintain a high average speed on longer routes.</div>")
@@ -688,14 +696,16 @@ server <- function(input, output) {
     })
     
     
-    output$individualOla1 <- renderPlot({
+    output$individualOla1 <- renderPlotly({
       
-      ActivitiesIndividual_Ola %>%
+      p <- ActivitiesIndividual_Ola %>%
         filter(Średnie.tętno != 0) %>% 
-        ggplot(aes(x = Średnie.tętno, y = Średnia.prędkość, color = Dystans, size = Dystans)) +
+        ggplot(aes(x = Średnie.tętno, y = Średnia.prędkość, color = Dystans, size = Dystans, text = paste("Average Pulse: ", Średnie.tętno,
+                                                                                                          "<br>Average Speed: ", Średnia.prędkość,
+                                                                                                          "<br>Distance: ",  Dystans, "km"))) +
         geom_point() +
         scale_color_gradient(low = "#ffb663", high = "#7C065C", name = "Distance [km]") +
-        scale_size_continuous(range = c(1, 6), name = "Distance [km]") +
+        scale_size_continuous(range = c(1, 4), name = "Distance [km]") +
         labs(
           title = "Relation between Average Speed and Average Pulse",
           x = "Average Pulse",
@@ -704,6 +714,8 @@ server <- function(input, output) {
         guides(color = guide_legend(title = "Distance [km]")) +
         theme_minimal()+
         theme(plot.title = element_text(hjust = 0.5))
+      
+      ggplotly(p, tooltip = c("text"))
       
     })
     
@@ -781,7 +793,8 @@ server <- function(input, output) {
                                                tickfont = list(size = 10)))) %>%
         add_lines(y = ~Maksymalny.rytm.pedałowania, name = "Max Pedaling Rhythm", line = list(color = "#7C065C", width = 3),
                   text = paste("Date: ", activities_Ola_plot$Data, "<br>Distance: ", activities_Ola_plot$Dystans,
-                               "<br>Time: ", activities_Ola_plot$Czas, "<br>Max pedaling rhythm: ", activities_Ola_plot$Maksymalny.rytm.pedałowania),
+                               "<br>Time: ", activities_Ola_plot$Czas, "<br>Max pedaling rhythm: ", activities_Ola_plot$Maksymalny.rytm.pedałowania,
+                               "<br>Average pedaling rhythm: ", activities_Ola_plot$Średni.rytm.pedałowania),
                   hoverinfo = "text") %>%
         layout(title = "Average and Max Pedaling Rhythm",
                xaxis = list(title = "Date", tickangle = -50, categoryorder = "array", categoryarray = custom_order),
