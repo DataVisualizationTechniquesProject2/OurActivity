@@ -12,11 +12,11 @@ library(scales)
 library(leaflet)
 library(geosphere)
 library(htmlwidgets)
-#install.packages("dashboardthemes")
 library(dashboardthemes)
 library(shinycssloaders)
-#install.packages("magick")
 library(magick)
+
+Sys.setlocale("LC_TIME", "en_US.UTF-8")
 
 #setwd("C:\\Users\\macie\\Desktop\\STUDIA\\SEMESTR3\\Techniki Wizualizacji Danych\\PROJEKTY\\Project2\\MM")
 activities_Ola <- read.csv("activities_Ola.csv")
@@ -723,7 +723,7 @@ server <- function(input, output) {
     output$individualOla2 <- renderPlotly({
       
       ActivitiesIndividual_Ola %>% 
-        filter(ActivitiesIndividual_Ola$Year == input$yearChoice)  %>% 
+        filter(ActivitiesIndividual_Ola$Year == 2023)  %>% 
         filter(Średni.rytm.pedałowania != 0 & Średnie.tętno != 0) -> activities_Ola_plot
       if(input$yearChoice == 2019){
         activities_Ola_plot %>% 
@@ -822,18 +822,20 @@ server <- function(input, output) {
               y=~score, 
               type="bar",
               hoverinfo = "text",
-              text = paste("Person: ", df$Osoba, "<br>Month: ", df$Month, paste("<br>",input$zmienna_heat_Ola, ":"), df$score),
+              text = paste("Month: ", month.name[df$Month], paste("<br>",input$zmienna_heat_Ola, ":"), df$score),
               textposition = "none",
               marker = list(color = "#7C065C")
       ) %>% 
         layout( 
           xaxis = list(title = "Month", tickformat=".d",tickvals = unique(df$Month), 
-                       ticktext = unique(df$Month)),
+                       ticktext = month.abb[unique(df$Month)]),
           yaxis = list(title=input$zmienna_heat_Ola)
         )
     })
 
     output$individualOla5 <- renderPlotly({
+      weekday_names <- c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+      
       if(input$zmienna_heat_Ola == "Number of records"){
         output$individualOla5PlotTitle <- renderText({"Number of records in each day"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Ola") %>% group_by(Osoba,Day) %>% summarise(score=n())
@@ -851,13 +853,13 @@ server <- function(input, output) {
               y=~score, 
               type="bar",
               hoverinfo = "text",
-              text = paste("Person: ", df$Osoba, "<br>Day: ", df$Day, paste("<br>",input$zmienna_heat_Ola, ":"), df$score),
+              text = paste("Day: ", weekday_names[df$Day], paste("<br>",input$zmienna_heat_Ola, ":"), df$score),
               textposition = "none",
               marker = list(color = "#7C065C")
       ) %>% 
         layout( 
           xaxis = list(title = "Day", tickformat=".d",tickvals = unique(df$Day), 
-                       ticktext = unique(df$Day)),
+                       ticktext = weekday_names[unique(df$Day)]),
           yaxis = list(title=input$zmienna_heat_Ola)
         )
     })
@@ -1065,18 +1067,20 @@ server <- function(input, output) {
               y=~score, 
               type="bar",
               hoverinfo = "text",
-              text = paste("Person: ", df$Osoba, "<br>Month: ", df$Month, paste("<br>",input$zmienna_heat_Kuba, ":"), df$score),
+              text = paste("Month: ", month.name[df$Month], paste("<br>",input$zmienna_heat_Kuba, ":"), df$score),
               textposition = "none",
               marker = list(color = "#F9B330")
       ) %>% 
         layout( 
           xaxis = list(title = "Month", tickformat=".d",tickvals = unique(df$Month), 
-                       ticktext = unique(df$Month)),
+                       ticktext = month.abb[unique(df$Month)]),
           yaxis = list(title=input$zmienna_heat_Kuba)
         )
     })
     
     output$individualKuba5 <- renderPlotly({
+      weekday_names <- c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+      
       if(input$zmienna_heat_Kuba == "Number of records"){
         output$individualKuba5PlotTitle <- renderText({"Number of records in each day"})
         df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Kuba") %>% group_by(Osoba,Day) %>% summarise(score=n())
@@ -1094,13 +1098,13 @@ server <- function(input, output) {
               y=~score, 
               type="bar",
               hoverinfo = "text",
-              text = paste("Person: ", df$Osoba, "<br>Day: ", df$Day, paste("<br>",input$zmienna_heat_Kuba, ":"), df$score),
+              text = paste("Day: ", weekday_names[df$Day], paste("<br>",input$zmienna_heat_Kuba, ":"), df$score),
               textposition = "none",
               marker = list(color = "#F9B330")
       ) %>% 
         layout( 
           xaxis = list(title = "Day", tickformat=".d",tickvals = unique(df$Day), 
-                       ticktext = unique(df$Day)),
+                       ticktext = weekday_names[unique(df$Day)]),
           yaxis = list(title=input$zmienna_heat_Kuba)
         )
     })
@@ -1301,19 +1305,21 @@ server <- function(input, output) {
                 y=~score, 
                 type="bar",
                 hoverinfo = "text",
-                text = paste("Person: ", df$Osoba, "<br>Month: ", df$Month, paste("<br>",input$zmienna_heat_Maciek, ":"), df$score),
+                text = paste("Month: ", month.name[df$Month], paste("<br>",input$zmienna_heat_Maciek, ":"), df$score),
                 textposition = "none",
                 marker = list(color = "#263672")
         ) %>% 
           layout( 
             xaxis = list(title = "Month", tickformat=".d",tickvals = unique(df$Month), 
-                         ticktext = unique(df$Month)),
+                         ticktext = month.abb[unique(df$Month)]),
             yaxis = list(title=input$zmienna_heat_Maciek)
           )
       })
 
       
       output$individualMaciek5 <- renderPlotly({
+        weekday_names <- c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+        
         if(input$zmienna_heat_Maciek == "Number of records"){
           output$individualMaciek5PlotTitle <- renderText({"Number of records in each day"})
           df <- ActivitiesTogether %>% filter(Rok >=2020, Osoba == "Maciek") %>% group_by(Osoba,Day) %>% summarise(score=n())
@@ -1331,13 +1337,13 @@ server <- function(input, output) {
                 y=~score, 
                 type="bar",
                 hoverinfo = "text",
-                text = paste("Person: ", df$Osoba, "<br>Day: ", df$Day, paste("<br>",input$zmienna_heat_Maciek, ":"), df$score),
+                text = paste("Day: ", weekday_names[df$Day], paste("<br>",input$zmienna_heat_Maciek, ":"), df$score),
                 textposition = "none",
                 marker = list(color = "#263672")
         ) %>% 
           layout( 
             xaxis = list(title = "Day", tickformat=".d",tickvals = unique(df$Day), 
-                         ticktext = unique(df$Day)),
+                         ticktext = weekday_names[unique(df$Day)]),
             yaxis = list(title=input$zmienna_heat_Maciek)
           )
       })
