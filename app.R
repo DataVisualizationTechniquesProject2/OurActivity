@@ -450,7 +450,8 @@ body <- dashboardBody(
                 ),
                 width = 6
               ),
-              box(status = "primary", solidHeader = T,
+              box(
+                title = "Progression over the years", status = "primary", solidHeader = T,
                 shinycssloaders::withSpinner(plotlyOutput("competition2"),
                                              type = getOption("spinner.type", default = 5),
                                              color = getOption("spinner.color", default = "#394572"),
