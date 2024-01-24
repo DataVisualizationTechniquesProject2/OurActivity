@@ -1,7 +1,8 @@
 # Our Bike activity
 This R project was done as a part of [Data Visualization Techniques](https://github.com/kozaka93/2023Z-DataVisualizationTechniques) course. To check how our project repository looks like, click this [link](https://github.com/DataVisualizationTechniquesProject2/Project2). The application was build by [Aleksandra Kwiatkowska](https://github.com/Alexa263), [Maciej Momot](https://github.com/MaciejMomot) and [Jakub Półtorak](https://github.com/JakubPoltorak147).
 
-As we all are sport enthiusiasts, we have decided to analise and visualize data from our bike activities. We have managed to get data from 3 applications: Strava, Huawei Health and Garmin Connect. Check out, how our project looks like and what we included in our tabs.
+As we all are sport enthiusiasts, we have decided to analise and visualize data from our bike activities. We have managed to get data from 3 applications: Strava, Huawei Health and Garmin Connect. Check out, how our project looks like and what we included in our tabs. But before that watch the video, where we present our app, by clicking on this [video link](https://www.youtube.com/watch?v=3BAXike0Y0o).
+
 ## Table of Contents  
 - [Installation](#installation) 
 - [App content](#AppContent) 
