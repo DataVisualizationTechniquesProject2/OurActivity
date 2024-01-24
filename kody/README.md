@@ -51,3 +51,5 @@ Now you can run the `app.R` and enjoy our bike content!
 
 ## App Content<a id="AppContent"></a>
 1. Homepage
+On homepage, we put gif of a cyclist and also 3 icons. The same colors of icons were used in the whole project to identify our individual data.
+![Alt text](markdown_images/homepage_screen.png) 
