@@ -13,8 +13,10 @@ To clone this repository, use the following `git` command:
 Now you just have to open your RStudio app or other developer tool, where you can run R files. Import the the `app.R` file and install necesarry packages. 
 Check whether you have all of these packages installed, if not copy code below to install those, which you don't have.
 
-`install.packages(shiny)    `
+`install.packages(shiny)`
+
 `install.packages(shinydashboard)`
+
 `install.packages(ggplot2)`
 `install.packages(plotly)`
 `install.packages(dplyr)`
