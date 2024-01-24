@@ -201,9 +201,9 @@ body <- dashboardBody(
   tabItems(
     ### Kuba ###
        tabItem(tabName="home",
-               fluidRow(
-                 uiOutput("homePageDescription")
-               ),
+               #fluidRow(
+                # uiOutput("homePageDescription")
+               #),
                fluidRow(column(
                  width=12,
                  offset=0,
@@ -220,11 +220,11 @@ body <- dashboardBody(
               ),
               fluidRow(
                 
-                column(4, img(src = "ikona3-1.png", width = 300, height = 300),style="text-align: center;"),
+                column(4, img(src = "ikona3-2.png", width = 300, height = 300),style="text-align: center;"),
                 
-                column(4, img(src = "ikona2-1.png", width = 300, height = 300),style="text-align: center;"),
+                column(4, img(src = "ikona2-2.png", width = 300, height = 300),style="text-align: center;"),
                 
-                column(4, img(src = "ikona1-1.png", width = 300, height = 300),style="text-align: center;")
+                column(4, img(src = "ikona1-2.png", width = 300, height = 300),style="text-align: center;")
               )
               ),
     
@@ -875,8 +875,36 @@ server <- function(input, output) {
            contentType = 'image/gif')
     },deleteFile = FALSE)
     
+    track_info_data <-
+      activities_Ola[c(74, 23, 54, 49, 2, 253, 169, 276, 109, 275, 307, 314, 319, 316, 318), ]
+    track_info_data %>% mutate(
+      choice_type = c(
+        "Kuba_1",
+        "Kuba_2",
+        "Kuba_3",
+        "Kuba_4",
+        "Kuba_5",
+        "Maciek_1",
+        "Maciek_2",
+        "Maciek_3",
+        "Maciek_4",
+        "Maciek_5",
+        "Ola_1",
+        "Ola_2",
+        "Ola_3",
+        "Ola_4",
+        "Ola_5"
+      ),
+      time_h = DurationMinutes %/% 60,
+      time_m = floor(DurationMinutes - time_h * 60),
+      time_s = DurationMinutes * 60 - time_h * 3600 - time_m * 60
+    ) -> track_info_data
+    
+    
     output$mapOfTrack <- renderLeaflet(
       {
+        track_selected<-paste(input$track,"_",input$number_of_track,sep="")
+        df_info_track<-track_info_data %>% filter(choice_type==track_selected)
         mydata<-read.csv(paste("Top5_Activities\\activity_",input$track,"_",input$number_of_track,".csv",sep=""))
         mydata$ele<-mydata$speed
         hotlinePlugin <- htmltools::htmlDependency(
@@ -901,7 +929,7 @@ server <- function(input, output) {
         paste("Kilometer: ","<strong>",coords_of_kilometers$kilometer,"</strong>","<br>Average speed: ","<strong>",round(coords_of_kilometers$mean_speed,2),"</strong>",sep="") %>%
           lapply(htmltools::HTML) -> labels
         
-        leaflet() %>% addTiles() %>%
+        map_with_colors<-leaflet() %>% addTiles() %>%
           fitBounds( min(mydata$lon), min(mydata$lat), max(mydata$lon), max(mydata$lat) ) %>%
           registerPlugin(hotlinePlugin) %>%
           onRender("function(el, x, data) {
@@ -910,7 +938,30 @@ server <- function(input, output) {
             L.hotline(data, {min: 0, max: 40}).addTo(this);
           }", data = mydata ) %>% addLegend("bottomright",pal=palette,values=0:40,opacity=1,title="Speed [km/h]") %>% 
           addCircleMarkers(data=coords_of_kilometers,lat=~lat,lng=~lon,label=~labels,fillColor="#405CB9",fillOpacity=1,stroke=F,radius=6)
-        
+  #       map_with_colors %>% onRender(
+  #         "
+  #   function(el, x, df_info_track) {
+  #     var info = L.control();
+  # 
+  #     info.onAdd = function(map) {
+  #       this._div = L.DomUtil.create('div', 'info-box'); // tworzymy div z klasą 'info-box'
+  #       this.update();
+  #       return this._div;
+  #     };
+  # 
+  #     info.update = function(df) {
+  #       var currentData = HTMLWidgets.dataframeToD3(df); // Zakładam, że dane są jednolite na mapie
+  # 
+  #       this._div.innerHTML = '<h4>Informacje</h4>' +
+  #                             '<p>Data: ' + currentData.Date + '</p>' +
+  #                             '<p>Dystans: ' + currentData.Distance + ' km</p>' +
+  #                             '<p>Czas: ' + currentData.DurationMinutes + ' minut</p>' +
+  #                             '<p>Średnia prędkość: ' + currentData.AvgSpeed + ' km/h</p>';
+  #     };
+  # 
+  #     info.addTo(this);
+  #   }
+  # ",df=df_info_track)
       }
     )
     output$homePageDescription<-renderUI({HTML("<div style='text-align: justify; font-size: 18px; margin: 20px;'>I have been planning this trip with my bike comrade Michał for a year. 
@@ -1007,24 +1058,22 @@ server <- function(input, output) {
       
     })
     output$individualTextKuba2 <- renderUI({
-      HTML("<div style='text-align: justify;'>The first plot shows the relations between distance and actual spent time on riding a bike.   
+      HTML("<div style='text-align: justify;'>The first plot shows the relation between distance and actual spent time on riding a bike.   
       The y-axis value corresponds to fraction of the ride, in which speed was greater than zero. 
       So for example when my ride had a value of 79, this means that the 79% of the time I recorded activity were actually ridden. 
-      The 21% of the time I spent on waiting for light change or I was just chilling and regenerating.</div>")
+      The 21% of the time I spent on waiting for light change or I was just chilling and regenerating. You can explore how actual ride time corresponded to length of the ride.</div>")
       
     })
     output$individualTextKuba3 <- renderUI({
-      HTML("<div style='text-align: justify;'>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec maximus arcu dictum, 
-      lobortis velit quis, euismod libero. Phasellus pretium, dolor nec cursus volutpat, 
-      ipsum velit maximus eros, sit amet ornare ante tortor id nisl. 
-      Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. 
-      Phasellus urna mi, lacinia quis rutrum at, placerat in dolor. Nulla eu ornare sapien. 
-      Ut turpis ante, semper non massa at, maximus rutrum tellus. Ut sed iaculis metus, 
-      pretium sollicitudin magna. Suspendisse consequat rhoncus leo vel dignissim. Nulla facilisi.
-      In ornare nulla in libero dignissim, ut tempus mi aliquam. Proin eu nisi ligula. 
-      Vivamus egestas justo sem, vitae volutpat ligula hendrerit sed. Nulla sit amet ante felis. 
-      Vivamus sagittis tristique diam quis elementum.</div>")
+      HTML(
+        "<div style='text-align: justify;'>
+      Check out my elevation data from all of my rides. You may find it confusing at first glance to understand, what is presented here, 
+        but I will try to explain you. This map shows all coordinates of places with maximum elevation  and minimum elevation. 
+        Each marker is responsible for either maximum or minimum elevation on a certain ride. Yellow ones are for minimum elevation and red ones are for maximum elevation. 
+        The bigger radius of marker, the higher elevation it is. For example for my ride near Baltic sea, you will notice both maximum and minimum elevation quite low, so as the radius is. 
+        You can explore all of markers, by clicking on them. There are some interesting info about track data on them. 
+        You also may notice that there are a lot of red markers near Góra Kalwaria. That’s beacause I used to ride there a lot..</div>"
+      )
       
     })
     output$individualPlotKuba1<-renderPlotly({
@@ -1037,7 +1086,10 @@ server <- function(input, output) {
       plot_ly(data=sml_elapsed_moving_time,
               x=~Distance,
               y=~(100*percent_of_ridden_time),
-              color=~length_of_track,colors=c("#53296E", "#6B82DB", "#f9a13c"))%>%
+              color=~length_of_track,colors=c("#53296E", "#6B82DB", "#f9a13c"),
+              hoverinfo = "text",
+              text = paste("Distance: ",sml_elapsed_moving_time$Distance," km", "<br> Percent of ridden time: ",round(100*sml_elapsed_moving_time$percent_of_ridden_time,2),"%" ,"<br> Track type: ",sml_elapsed_moving_time$length_of_track,sep=""),
+              textposition = "none")%>%
         layout(title="Relation between distance and actual time spend on the ride",
                  yaxis=list(title="Percent of time spent on the ride"))
     })
