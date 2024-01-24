@@ -61,3 +61,9 @@ On homepage, we put gif of a cyclist and also 3 icons. The same colors of icons 
 In this tab, we visualized our most interesting tracks. Everyone chose 5 of them. We put our geolocalization data on a map and added info about mean speed at each part of the ride.
 
 ![Alt text](markdown_images/top5_screen.png) 
+
+3. Short\Medium\Long
+
+This tab is about our rides in terms of their length. We have divided our activities into the 3 sections: Short, Medium and Long. We then visualized some interesting facts connected with this partition.
+
+![Alt text](markdown_images/sml_screen.png) 
