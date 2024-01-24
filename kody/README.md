@@ -51,5 +51,13 @@ Now you can run the `app.R` and enjoy our bike content!
 
 ## App Content<a id="AppContent"></a>
 1. Homepage
+
 On homepage, we put gif of a cyclist and also 3 icons. The same colors of icons were used in the whole project to identify our individual data.
+
 ![Alt text](markdown_images/homepage_screen.png) 
+
+2. Top 5 Activities
+
+In this tab, we visualized our most interesting tracks. Everyone chose 5 of them. We put our geolocalization data on a map and added info about mean speed at each part of the ride.
+
+![Alt text](markdown_images/top5_screen.png) 
