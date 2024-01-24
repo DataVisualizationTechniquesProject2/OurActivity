@@ -18,19 +18,33 @@ Check whether you have all of these packages installed, if not copy code below t
 `install.packages(shinydashboard)`
 
 `install.packages(ggplot2)`
+
 `install.packages(plotly)`
+
 `install.packages(dplyr)`
+
 `install.packages(fresh)`
+
 `install.packages(lubridate)`
+
 `install.packages(tidyverse)`
+
 `install.packages(viridis)`
+
 `install.packages(htmltools)`
+
 `install.packages(scales)`
+
 `install.packages(leaflet)`
+
 `install.packages(geosphere)`
+
 `install.packages(htmlwidgets)`
+
 `install.packages(dashboardthemes)`
+
 `install.packages(shinycssloaders)`
+
 `install.packages(magick)`
 
 Now you can run the `app.R` and enjoy our bike content!
